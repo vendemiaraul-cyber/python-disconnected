@@ -1,0 +1,41 @@
+# word_stats.pyd - Yellow manages the text, Blue does the logic.
+
+:: yellow ::
+# Reading files and splitting text is "text managing" -> Yellow's job.
+with open("story.txt", encoding="utf-8") as f:
+    text = f.read()
+
+words = [w.strip(".,!?;:\"'").lower() for w in text.split()]
+words = [w for w in words if w]
+
+lengths = [len(w) for w in words]
+
+counts = {}
+for w in words:
+    counts[w] = counts.get(w, 0) + 1
+
+give("lengths", lengths)
+give("counts", counts)
+give("title", "Story statistics")
+blue()
+
+:: blue ::
+# Pure logic: numbers, loops, dicts, functions. No text methods allowed.
+def average(nums):
+    if len(nums) == 0:
+        return 0
+    return sum(nums) / len(nums)
+
+def top(d, n):
+    pairs = sorted(d.items(), key=lambda p: p[1], reverse=True)
+    return pairs[:n]
+
+print("===", title, "===")
+print("Total words:  ", len(lengths))
+print("Unique words: ", len(counts))
+print("Average length:", round(average(lengths), 2))
+print("Longest word length:", max(lengths))
+print()
+print("Top 5 words:")
+for word, n in top(counts, 5):
+    print(" ", word, "x", n)

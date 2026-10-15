@@ -1,0 +1,10 @@
+# broken_blue_text.pyd - shows the rule: Blue tried to manage text.
+# Run it to see the error, then move the .split() into Yellow.
+
+:: yellow ::
+give("sentence", "blue does not split strings")
+blue()
+
+:: blue ::
+words = sentence.split()
+print(len(words))

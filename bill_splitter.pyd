@@ -1,0 +1,67 @@
+# bill_splitter.pyd - split a restaurant bill between friends, with a tip.
+# Yellow reads the receipt text, Blue does the money math.
+
+:: yellow ::
+# Edit the receipt below: one "name: price" per dish.
+# Dishes under "shared" are split evenly between everyone.
+receipt = """
+Alice: 18.50
+Alice: 14.00
+Bob: 18.00
+Cara: 16.25
+Cara: 8.50
+shared: 9.00
+shared: 6.00
+"""
+tip_percent = 18
+
+orders = {}
+shared_cents = 0
+for line in receipt.strip().splitlines():
+    name, price = line.split(":")
+    cents = round(float(price) * 100)
+    name = name.strip().title()
+    if name == "Shared":
+        shared_cents += cents
+    else:
+        orders[name] = orders.get(name, 0) + cents
+
+give("orders", orders)
+give("shared_cents", shared_cents)
+give("tip_percent", tip_percent)
+blue()
+
+:: blue ::
+# All money is whole cents, so nothing gets lost to rounding.
+def money(cents):
+    return f"${cents // 100}.{cents % 100:02d}"
+
+def allocate(total, weights):
+    # Split total cents in proportion to weights; leftover cents go to
+    # whoever lost the most to rounding, so the parts add up exactly.
+    weight_sum = sum(weights)
+    if weight_sum == 0:
+        weights = [1 for w in weights]
+        weight_sum = len(weights)
+    parts = [total * w // weight_sum for w in weights]
+    remainders = [total * w % weight_sum for w in weights]
+    order = sorted(range(len(parts)), key=lambda i: remainders[i], reverse=True)
+    for i in order[:total - sum(parts)]:
+        parts[i] += 1
+    return parts
+
+names = sorted(orders)
+shared_parts = allocate(shared_cents, [1 for n in names])
+portions = [orders[n] + s for n, s in zip(names, shared_parts)]
+subtotal = sum(portions)
+tip = (subtotal * tip_percent + 50) // 100   # rounded to the nearest cent
+tip_parts = allocate(tip, portions)
+
+print("Subtotal:   ", money(subtotal))
+print(f"Tip ({tip_percent}%):  ", money(tip))
+print("Total:      ", money(subtotal + tip))
+print()
+for n, portion, t in zip(names, portions, tip_parts):
+    print(f"{n:<6} pays {money(portion + t):>8}  (food {money(portion)} + tip {money(t)})")
+print()
+print("Everyone together:", money(sum(portions) + sum(tip_parts)))

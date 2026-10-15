@@ -1,0 +1,23 @@
+# fizzbuzz.blue - a Blue-only program. No Yellow needed for plain logic.
+
+class Counter:
+    def __init__(self):
+        self.fizz = 0
+        self.buzz = 0
+
+c = Counter()
+for n in range(1, 21):
+    if n % 15 == 0:
+        print("FizzBuzz")
+        c.fizz += 1
+        c.buzz += 1
+    elif n % 3 == 0:
+        print("Fizz")
+        c.fizz += 1
+    elif n % 5 == 0:
+        print("Buzz")
+        c.buzz += 1
+    else:
+        print(n)
+
+print("fizz count:", c.fizz, "| buzz count:", c.buzz)

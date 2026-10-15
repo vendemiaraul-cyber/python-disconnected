@@ -1,0 +1,9 @@
+# broken_no_blue.pyd - shows the rule: Yellow forgot to end with blue().
+# Run it to see the error.
+
+:: yellow ::
+give("x", 41)
+print("Yellow is done... but never ran Blue")
+
+:: blue ::
+print(x + 1)

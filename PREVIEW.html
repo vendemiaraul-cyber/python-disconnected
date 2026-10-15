@@ -1,0 +1,1112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Disconnected</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjI1NiIgaGVpZ2h0PSIyNTYiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iUHl0aG9uIERpc2Nvbm5lY3RlZCBsb2dvIj4KICA8dGl0bGU+UHl0aG9uIERpc2Nvbm5lY3RlZDwvdGl0bGU+CiAgPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSI2MyIgaGVpZ2h0PSI2MyIgcng9IjE0LjUiIGZpbGw9IiMxNTE3MWUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIvPgogIDwhLS0gWWVsbG93IFB5dGhvbjogaGVhZCBhbmQgdXBwZXIgY3VydmUgLS0+CiAgPHBhdGggZD0iTTQyIDE1LjIgQzMyIDEwLjggMTcgMTIuNiAxNyAyMi40IEMxNyAyOC42IDIyLjYgMzAuNCAyNi42IDMxIiBmaWxsPSJub25lIiBzdHJva2U9IiNmNWMzM2IiIHN0cm9rZS13aWR0aD0iOC42IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8ZWxsaXBzZSBjeD0iNDUuMiIgY3k9IjE1LjYiIHJ4PSI3IiByeT0iNi4yIiBmaWxsPSIjZjVjMzNiIi8+CiAgPGNpcmNsZSBjeD0iNDcuMiIgY3k9IjEzLjYiIHI9IjEuNyIgZmlsbD0iIzE1MTcxZSIvPgogIDxwYXRoIGQ9Ik01MiAxNi40IEw1Ni4yIDE1IE01MiAxNi40IEw1NS44IDE4LjgiIHN0cm9rZT0iI2ZmNmI2YiIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gQmx1ZSBQeXRob246IGxvd2VyIGN1cnZlIGFuZCB0YXBlcmVkIHRhaWwgLS0+CiAgPHBhdGggZD0iTTM3LjQgMzMgQzQyIDMzLjggNDcgMzYgNDcgNDIgQzQ3IDUwLjIgMzYgNTIuNiAyNSA1MSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNGY4NmZmIiBzdHJva2Utd2lkdGg9IjguNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTI1LjYgNDYuNyBDMjAgNDYgMTUgNDYuNiAxMC41IDQ5LjIgQzE1IDUxLjQgMjAgNTUuNiAyNS4yIDU1LjMgWiIgZmlsbD0iIzRmODZmZiIvPgogIDwhLS0gdGhlIGRpc2Nvbm5lY3Qgc3BhcmsgLS0+CiAgPHBhdGggZD0iTTMzLjYgMjYuMiBMMzAuMiAzMiBMMzMuOCAzMiBMMzAuNCAzNy44IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS45IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+:root{
+  --bg:#f5f4f0; --surface:#fff; --ink:#1b1d22; --muted:#626875; --line:#e2e0d9;
+  --blue:#2459d6; --blue-soft:#eaf0ff; --yellow:#b07800; --yellow-ink:#7a5300; --yellow-soft:#fff5d9;
+  --code-bg:#fbfaf7; --red:#c23b3b; --green:#25784a;
+  --t-kw:#8a3fb8; --t-str:#25784a; --t-com:#8a8f99; --t-num:#c0561b; --t-bi:#1c6f8c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101217; --surface:#171a21; --ink:#e9eaee; --muted:#9aa1ae; --line:#272b35;
+    --blue:#7aa2ff; --blue-soft:#162038; --yellow:#f2c14e; --yellow-ink:#f2c14e; --yellow-soft:#2a2210;
+    --code-bg:#13151b; --red:#ff7f7f; --green:#6fd39a;
+    --t-kw:#d39bff; --t-str:#8fdcae; --t-com:#6f7684; --t-num:#ffab70; --t-bi:#6fd0f0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101217; --surface:#171a21; --ink:#e9eaee; --muted:#9aa1ae; --line:#272b35;
+  --blue:#7aa2ff; --blue-soft:#162038; --yellow:#f2c14e; --yellow-ink:#f2c14e; --yellow-soft:#2a2210;
+  --code-bg:#13151b; --red:#ff7f7f; --green:#6fd39a;
+  --t-kw:#d39bff; --t-str:#8fdcae; --t-com:#6f7684; --t-num:#ffab70; --t-bi:#6fd0f0;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px 32px}
+code,pre,textarea,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+h1,h2,h3{margin:0;line-height:1.2}
+button{font:inherit}
+.js-flex,.js-block{display:none !important}
+html.js .js-flex{display:inline-flex !important}
+html.js .js-block{display:block !important}
+html.js .nojs{display:none !important}
+
+/* top */
+.top{display:flex;align-items:center;gap:12px;padding:14px 0 8px}
+.top > svg{width:44px;height:44px;flex:none}
+.top h1{font-size:21px;font-weight:800;letter-spacing:-.01em}
+.top h1 .y{color:var(--yellow)} .top h1 .b{color:var(--blue)}
+.top p{margin:1px 0 0;color:var(--muted);font-size:13.5px}
+.ver{margin-left:auto;font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 8px;white-space:nowrap;align-self:flex-start;margin-top:4px}
+
+/* rules strip */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.rule{border-radius:12px;padding:9px 11px;border:1px solid var(--line);font-size:12.5px;line-height:1.45}
+.rule b{display:block;font-size:13.5px;margin-bottom:2px}
+.rule.y{background:var(--yellow-soft);border-color:color-mix(in srgb,var(--yellow) 40%,var(--line))}
+.rule.b{background:var(--blue-soft);border-color:color-mix(in srgb,var(--blue) 40%,var(--line))}
+.rule.y b{color:var(--yellow-ink)} .rule.b b{color:var(--blue)}
+.rule > span{color:var(--muted)}
+.rule .no{color:var(--red)}
+.big{font-size:13px;border:1px dashed var(--line);border-radius:12px;padding:8px 12px;margin-bottom:10px;background:var(--surface)}
+.big code{font-weight:700;color:var(--yellow-ink)}
+
+/* tabs */
+.tabs{position:sticky;top:0;z-index:5;gap:4px;padding:8px 0;margin-bottom:6px;background:var(--bg);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 9px;font-size:12.5px;font-weight:600;cursor:pointer}
+.tab[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+html.js .panel{display:none}
+html.js .panel.active{display:block}
+.panel h2{font-size:17px;margin:20px 0 10px}
+html.js .panel > h2{display:none}
+
+/* example rows */
+details.ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
+details.ex > summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+details.ex > summary::-webkit-details-marker{display:none}
+details.ex > summary::before{content:"";width:7px;height:7px;flex:none;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s}
+details.ex[open] > summary::before{transform:rotate(45deg)}
+.ex-name{font:600 13.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ex-desc{color:var(--muted);font-size:13px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{margin-left:auto;font:700 10.5px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em;padding:4px 7px;border-radius:99px;flex:none}
+.badge.ok{color:var(--green);background:color-mix(in srgb,var(--green) 13%,transparent)}
+.badge.bad{color:var(--red);background:color-mix(in srgb,var(--red) 13%,transparent)}
+@media (max-width:520px){.ex-desc{display:none}}
+.ex-body{padding:0 12px 12px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 5px;min-height:28px}
+.lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.tag{font-size:10.5px;font-weight:600;letter-spacing:0;text-transform:none;margin-left:5px;padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
+.tag.live{color:var(--green);border-color:var(--green)}
+.tools{gap:5px}
+.btn{border:1px solid var(--blue);background:var(--blue);color:#fff;border-radius:8px;padding:6px 11px;font-size:12.5px;font-weight:600;cursor:pointer;line-height:1.2}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.55;cursor:progress}
+.btn[hidden]{display:none}
+pre{margin:0;overflow-x:auto;font-size:12.5px;line-height:1.5;border-radius:9px}
+pre.code{background:var(--code-bg);border:1px solid var(--line);padding:4px 0}
+pre.code[hidden]{display:none}
+.band{display:block;width:max-content;min-width:100%;padding:4px 12px;border-left:3px solid transparent}
+.band-yellow{border-left-color:var(--yellow);background:color-mix(in srgb,var(--yellow-soft) 55%,transparent)}
+.band-blue{border-left-color:var(--blue);background:color-mix(in srgb,var(--blue-soft) 55%,transparent)}
+.band-none{color:var(--t-com)}
+.t-sec{font-weight:700} .t-sec-yellow{color:var(--yellow-ink)} .t-sec-blue{color:var(--blue)}
+.t-kw{color:var(--t-kw)} .t-str{color:var(--t-str)} .t-com{color:var(--t-com);font-style:italic}
+.t-num{color:var(--t-num)} .t-bi{color:var(--t-bi)}
+.t-fn{font-weight:700;color:var(--yellow-ink);background:var(--yellow-soft);border-radius:4px;padding:0 2px}
+pre.output{white-space:pre-wrap;overflow-wrap:anywhere;background:#0f1115;color:#e6e8ec;padding:10px 12px;border:1px solid #23262e}
+.err b{font-weight:800}
+.err-blue b{color:#7aa2ff} .err-yellow b{color:#f2c14e} .err-pyd b{color:#e48cff}
+.err-blue,.err-yellow{color:#ffb4b4} .err-pyd{color:#d8d8e0}
+.dim{color:#9aa1ae}
+textarea.editor{display:block;width:100%;min-height:240px;resize:vertical;font-size:12.5px;line-height:1.5;padding:10px 12px;border-radius:9px;border:1px solid var(--blue);background:var(--code-bg);color:var(--ink);tab-size:4}
+textarea.editor[hidden]{display:none}
+details.aux{margin-top:8px;border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--code-bg);font-size:13px}
+details.aux summary{cursor:pointer;color:var(--muted)}
+details.aux pre{white-space:pre-wrap;margin-top:6px;font-size:12px}
+
+/* connect AI */
+.connect{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.chead{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.link{display:flex;align-items:center;gap:6px;flex:none}
+.link svg{width:30px;height:30px}
+.link .plug{color:var(--muted);font-size:15px}
+.aibox{width:30px;height:30px;font-size:11px !important;border-radius:10px;display:grid;place-items:center;border:1.5px dashed var(--muted);color:var(--muted);font:700 12px system-ui,sans-serif}
+.chead b{display:block;font-size:15.5px}
+.chead span{color:var(--muted);font-size:13px}
+.field{margin:0 0 10px}
+.field span{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.field input{width:100%;font:14px system-ui,sans-serif;padding:9px 11px;border-radius:9px;border:1px solid var(--line);background:var(--code-bg);color:var(--ink)}
+.field input:focus,textarea.editor:focus{outline:2px solid color-mix(in srgb,var(--blue) 45%,transparent);outline-offset:1px}
+details.ai{border:1px solid var(--line);border-radius:11px;margin-top:8px;background:var(--code-bg)}
+details.ai > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:9px 12px;font-weight:650;font-size:14px}
+details.ai > summary::-webkit-details-marker{display:none}
+details.ai > summary small{color:var(--muted);font-weight:500;margin-left:auto;font-size:12px;text-align:right}
+details.ai[open] > summary{border-bottom:1px solid var(--line)}
+.ai-ico{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font:800 10px system-ui,sans-serif;color:#fff;flex:none}
+.ai-ico.cc{background:#c9643f} .ai-ico.cx{background:#3a3f4b} .ai-ico.ch{background:#2f8f6a}
+.ai-body{padding:10px 12px 12px}
+ol.mini{margin:0 0 8px;padding-left:18px;font-size:13.5px}
+ol.mini li{margin:2px 0}
+ol.mini code,.hint code{font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.codebox{position:relative}
+.codebox pre{background:#0f1115;color:#e6e8ec;border:1px solid #23262e;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere}
+html.js .codebox pre{padding-right:72px}
+.codebox pre.long{max-height:150px;overflow-y:auto}
+.codebox .btn{position:absolute;top:6px;right:6px;padding:5px 9px;font-size:12px}
+.hint{color:var(--muted);font-size:12.5px;margin:7px 0 0}
+
+/* local */
+.local{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
+.local ol{margin:0;padding-left:18px}
+.local li{margin:6px 0}
+.local pre{background:var(--code-bg);border:1px solid var(--line);padding:7px 10px;margin-top:4px}
+.local p{margin:10px 0 0;color:var(--muted);font-size:13px}
+.status{font-size:12px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;text-align:center;padding-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Python Disconnected logo">
+  
+  <rect x="0.5" y="0.5" width="63" height="63" rx="14.5" fill="#15171e" stroke="#ffffff" stroke-opacity="0.1"/>
+  <!-- Yellow Python: head and upper curve -->
+  <path d="M42 15.2 C32 10.8 17 12.6 17 22.4 C17 28.6 22.6 30.4 26.6 31" fill="none" stroke="#f5c33b" stroke-width="8.6" stroke-linecap="round"/>
+  <ellipse cx="45.2" cy="15.6" rx="7" ry="6.2" fill="#f5c33b"/>
+  <circle cx="47.2" cy="13.6" r="1.7" fill="#15171e"/>
+  <path d="M52 16.4 L56.2 15 M52 16.4 L55.8 18.8" stroke="#ff6b6b" stroke-width="1.4" stroke-linecap="round"/>
+  <!-- Blue Python: lower curve and tapered tail -->
+  <path d="M37.4 33 C42 33.8 47 36 47 42 C47 50.2 36 52.6 25 51" fill="none" stroke="#4f86ff" stroke-width="8.6" stroke-linecap="round"/>
+  <path d="M25.6 46.7 C20 46 15 46.6 10.5 49.2 C15 51.4 20 55.6 25.2 55.3 Z" fill="#4f86ff"/>
+  <!-- the disconnect spark -->
+  <path d="M33.6 26.2 L30.2 32 L33.8 32 L30.4 37.8" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+  <div>
+    <h1><span class="y">Python</span> <span class="b">Disconnected</span></h1>
+    <p>Two pythons. Yellow does the hard stuff, Blue does the logic.</p>
+  </div>
+  <span class="ver">v1.0</span>
+</header>
+
+<div class="rules">
+  <div class="rule y"><b>Yellow · runs first</b><span>APIs, files, imports, text managing. Sends data with <code>give()</code></span></div>
+  <div class="rule b"><b>Blue · runs last</b><span>Math, loops, functions, print. <span class="no">No imports or text methods.</span></span></div>
+</div>
+<div class="big">Yellow's last line is always <code>blue()</code>. That registers what it gave and runs Blue.</div>
+
+<nav class="tabs js-flex" role="tablist">
+  <button class="tab" role="tab" data-tab="ex" aria-selected="true">Examples</button>
+  <button class="tab" role="tab" data-tab="ai" aria-selected="false">Connect AI</button>
+  <button class="tab" role="tab" data-tab="play" aria-selected="false">Playground</button>
+  <button class="tab" role="tab" data-tab="local" aria-selected="false">Run locally</button>
+</nav>
+
+<section class="panel active" id="p-ex">
+  <h2>Examples</h2>
+  
+<details class="ex" data-file="word_stats.pyd" data-extra='["story.txt"]' open>
+  <summary><span class="ex-name">word_stats.pyd</span><span class="ex-desc">Yellow cleans a text file, Blue counts words</span><span class="badge ok">runs</span></summary>
+  <div class="ex-body">
+    <div class="bar"><span class="lbl">Program</span><span class="js-flex tools">
+      <button class="btn ghost" data-act="edit">Edit</button>
+      <button class="btn ghost" data-act="reset" hidden>Reset</button>
+      <button class="btn" data-act="run">Run live</button></span></div>
+    <pre class="code"><div class="band band-none"><span class="t-com"># word_stats.pyd - Yellow manages the text, Blue does the logic.</span></div><div class="band band-yellow"><span class="t-sec t-sec-yellow">:: yellow ::</span>
+<span class="t-com"># Reading files and splitting text is &quot;text managing&quot; -&gt; Yellow&#x27;s job.</span>
+<span class="t-kw">with</span> <span class="t-bi">open</span>(<span class="t-str">&quot;story.txt&quot;</span>, encoding=<span class="t-str">&quot;utf-8&quot;</span>) <span class="t-kw">as</span> f:
+    text = f.read()
+
+words = [w.strip(<span class="t-str">&quot;.,!?;:\&quot;&#x27;&quot;</span>).lower() <span class="t-kw">for</span> w <span class="t-kw">in</span> text.split()]
+words = [w <span class="t-kw">for</span> w <span class="t-kw">in</span> words <span class="t-kw">if</span> w]
+
+lengths = [<span class="t-bi">len</span>(w) <span class="t-kw">for</span> w <span class="t-kw">in</span> words]
+
+counts = {}
+<span class="t-kw">for</span> w <span class="t-kw">in</span> words:
+    counts[w] = counts.get(w, <span class="t-num">0</span>) + <span class="t-num">1</span>
+
+<span class="t-fn">give</span>(<span class="t-str">&quot;lengths&quot;</span>, lengths)
+<span class="t-fn">give</span>(<span class="t-str">&quot;counts&quot;</span>, counts)
+<span class="t-fn">give</span>(<span class="t-str">&quot;title&quot;</span>, <span class="t-str">&quot;Story statistics&quot;</span>)
+<span class="t-fn">blue</span>()</div><div class="band band-blue"><span class="t-sec t-sec-blue">:: blue ::</span>
+<span class="t-com"># Pure logic: numbers, loops, dicts, functions. No text methods allowed.</span>
+<span class="t-kw">def</span> average(nums):
+    <span class="t-kw">if</span> <span class="t-bi">len</span>(nums) == <span class="t-num">0</span>:
+        <span class="t-kw">return</span> <span class="t-num">0</span>
+    <span class="t-kw">return</span> <span class="t-bi">sum</span>(nums) / <span class="t-bi">len</span>(nums)
+
+<span class="t-kw">def</span> top(d, n):
+    pairs = <span class="t-bi">sorted</span>(d.items(), key=<span class="t-kw">lambda</span> p: p[<span class="t-num">1</span>], reverse=<span class="t-kw">True</span>)
+    <span class="t-kw">return</span> pairs[:n]
+
+<span class="t-bi">print</span>(<span class="t-str">&quot;===&quot;</span>, title, <span class="t-str">&quot;===&quot;</span>)
+<span class="t-bi">print</span>(<span class="t-str">&quot;Total words:  &quot;</span>, <span class="t-bi">len</span>(lengths))
+<span class="t-bi">print</span>(<span class="t-str">&quot;Unique words: &quot;</span>, <span class="t-bi">len</span>(counts))
+<span class="t-bi">print</span>(<span class="t-str">&quot;Average length:&quot;</span>, <span class="t-bi">round</span>(average(lengths), <span class="t-num">2</span>))
+<span class="t-bi">print</span>(<span class="t-str">&quot;Longest word length:&quot;</span>, <span class="t-bi">max</span>(lengths))
+<span class="t-bi">print</span>()
+<span class="t-bi">print</span>(<span class="t-str">&quot;Top 5 words:&quot;</span>)
+<span class="t-kw">for</span> word, n <span class="t-kw">in</span> top(counts, <span class="t-num">5</span>):
+    <span class="t-bi">print</span>(<span class="t-str">&quot; &quot;</span>, word, <span class="t-str">&quot;x&quot;</span>, n)</div></pre>
+    <textarea class="editor" spellcheck="false" hidden></textarea>
+    <details class="aux"><summary>story.txt · file Yellow reads</summary><pre>The blue python lived in a quiet garden. The yellow python lived at the edge of the world,
+where the wires and the signals came in. Every evening the yellow python gathered news,
+cleaned it, and passed it to the blue python. The blue python counted, compared and decided.
+Neither python could do the other&#x27;s work, and neither wanted to. The garden stayed quiet.
+</pre></details>
+    <div class="bar"><span class="lbl">Output <span class="tag out-tag">recorded</span></span></div>
+    <pre class="output">=== Story statistics ===
+Total words:   64
+Unique words:  36
+Average length: 4.48
+Longest word length: 8
+
+Top 5 words:
+  the x 11
+  python x 6
+  and x 4
+  blue x 3
+  lived x 2</pre>
+  </div>
+</details>
+
+<details class="ex" data-file="weather_api.pyd" data-extra='[]'>
+  <summary><span class="ex-name">weather_api.pyd</span><span class="ex-desc">Yellow calls a weather API, Blue picks outfits</span><span class="badge ok">runs</span></summary>
+  <div class="ex-body">
+    <div class="bar"><span class="lbl">Program</span><span class="js-flex tools">
+      <button class="btn ghost" data-act="edit">Edit</button>
+      <button class="btn ghost" data-act="reset" hidden>Reset</button>
+      <button class="btn" data-act="run">Run live</button></span></div>
+    <pre class="code"><div class="band band-none"><span class="t-com"># weather_api.pyd - Yellow calls a web API, Blue decides what to wear.</span>
+<span class="t-com"># Uses the free Open-Meteo API (no key needed). Falls back to sample data offline.</span></div><div class="band band-yellow"><span class="t-sec t-sec-yellow">:: yellow ::</span>
+<span class="t-kw">import</span> json
+<span class="t-kw">import</span> urllib.request
+
+CITY, LAT, LON = <span class="t-str">&quot;Rome&quot;</span>, <span class="t-num">41.89</span>, <span class="t-num">12.48</span>
+url = (<span class="t-str">&quot;https://api.open-meteo.com/v1/forecast&quot;</span>
+       <span class="t-str">f&quot;?latitude={LAT}&amp;longitude={LON}&quot;</span>
+       <span class="t-str">&quot;&amp;daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&quot;</span>
+       <span class="t-str">&quot;&amp;timezone=auto&amp;forecast_days=5&quot;</span>)
+
+<span class="t-kw">try</span>:
+    <span class="t-kw">with</span> urllib.request.urlopen(url, timeout=<span class="t-num">8</span>) <span class="t-kw">as</span> r:
+        daily = json.load(r)[<span class="t-str">&quot;daily&quot;</span>]
+    source = <span class="t-str">&quot;live&quot;</span>
+<span class="t-kw">except</span> Exception:
+    daily = {
+        <span class="t-str">&quot;time&quot;</span>: [<span class="t-str">&quot;Day 1&quot;</span>, <span class="t-str">&quot;Day 2&quot;</span>, <span class="t-str">&quot;Day 3&quot;</span>, <span class="t-str">&quot;Day 4&quot;</span>, <span class="t-str">&quot;Day 5&quot;</span>],
+        <span class="t-str">&quot;temperature_2m_max&quot;</span>: [<span class="t-num">22.1</span>, <span class="t-num">19.4</span>, <span class="t-num">15.0</span>, <span class="t-num">24.8</span>, <span class="t-num">27.3</span>],
+        <span class="t-str">&quot;temperature_2m_min&quot;</span>: [<span class="t-num">13.0</span>, <span class="t-num">12.2</span>, <span class="t-num">9.1</span>, <span class="t-num">14.5</span>, <span class="t-num">16.0</span>],
+        <span class="t-str">&quot;precipitation_probability_max&quot;</span>: [<span class="t-num">10</span>, <span class="t-num">65</span>, <span class="t-num">80</span>, <span class="t-num">5</span>, <span class="t-num">0</span>],
+    }
+    source = <span class="t-str">&quot;sample (offline)&quot;</span>
+
+<span class="t-fn">give</span>(<span class="t-str">&quot;city&quot;</span>, CITY)
+<span class="t-fn">give</span>(<span class="t-str">&quot;source&quot;</span>, source)
+<span class="t-fn">give</span>(<span class="t-str">&quot;days&quot;</span>, daily[<span class="t-str">&quot;time&quot;</span>])
+<span class="t-fn">give</span>(<span class="t-str">&quot;highs&quot;</span>, daily[<span class="t-str">&quot;temperature_2m_max&quot;</span>])
+<span class="t-fn">give</span>(<span class="t-str">&quot;lows&quot;</span>, daily[<span class="t-str">&quot;temperature_2m_min&quot;</span>])
+<span class="t-fn">give</span>(<span class="t-str">&quot;rain&quot;</span>, daily[<span class="t-str">&quot;precipitation_probability_max&quot;</span>])
+<span class="t-fn">blue</span>()</div><div class="band band-blue"><span class="t-sec t-sec-blue">:: blue ::</span>
+<span class="t-kw">def</span> outfit(high, rain_chance):
+    <span class="t-kw">if</span> rain_chance &gt;= <span class="t-num">50</span>:
+        extra = <span class="t-str">&quot; + umbrella&quot;</span>
+    <span class="t-kw">else</span>:
+        extra = <span class="t-str">&quot;&quot;</span>
+    <span class="t-kw">if</span> high &gt;= <span class="t-num">25</span>:
+        <span class="t-kw">return</span> <span class="t-str">&quot;t-shirt&quot;</span> + extra
+    <span class="t-kw">elif</span> high &gt;= <span class="t-num">18</span>:
+        <span class="t-kw">return</span> <span class="t-str">&quot;light jacket&quot;</span> + extra
+    <span class="t-kw">else</span>:
+        <span class="t-kw">return</span> <span class="t-str">&quot;warm coat&quot;</span> + extra
+
+<span class="t-bi">print</span>(<span class="t-str">&quot;Forecast for&quot;</span>, city, <span class="t-str">&quot;-&quot;</span>, source)
+<span class="t-kw">for</span> i <span class="t-kw">in</span> <span class="t-bi">range</span>(<span class="t-bi">len</span>(days)):
+    <span class="t-bi">print</span>(days[i], <span class="t-str">&quot;|&quot;</span>, lows[i], <span class="t-str">&quot;to&quot;</span>, highs[i], <span class="t-str">&quot;C |&quot;</span>, rain[i], <span class="t-str">&quot;% rain -&gt;&quot;</span>,
+          outfit(highs[i], rain[i]))
+
+warmest = <span class="t-num">0</span>
+<span class="t-kw">for</span> i <span class="t-kw">in</span> <span class="t-bi">range</span>(<span class="t-bi">len</span>(highs)):
+    <span class="t-kw">if</span> highs[i] &gt; highs[warmest]:
+        warmest = i
+<span class="t-bi">print</span>(<span class="t-str">&quot;Warmest day:&quot;</span>, days[warmest])</div></pre>
+    <textarea class="editor" spellcheck="false" hidden></textarea>
+    
+    <div class="bar"><span class="lbl">Output <span class="tag out-tag">recorded</span></span></div>
+    <pre class="output">Forecast for Rome - sample (offline)
+Day 1 | 13.0 to 22.1 C | 10 % rain -&gt; light jacket
+Day 2 | 12.2 to 19.4 C | 65 % rain -&gt; light jacket + umbrella
+Day 3 | 9.1 to 15.0 C | 80 % rain -&gt; warm coat + umbrella
+Day 4 | 14.5 to 24.8 C | 5 % rain -&gt; light jacket
+Day 5 | 16.0 to 27.3 C | 0 % rain -&gt; t-shirt
+Warmest day: Day 5</pre>
+  </div>
+</details>
+
+<details class="ex" data-file="fizzbuzz.blue" data-extra='[]'>
+  <summary><span class="ex-name">fizzbuzz.blue</span><span class="ex-desc">Blue on its own: plain logic</span><span class="badge ok">runs</span></summary>
+  <div class="ex-body">
+    <div class="bar"><span class="lbl">Program</span><span class="js-flex tools">
+      <button class="btn ghost" data-act="edit">Edit</button>
+      <button class="btn ghost" data-act="reset" hidden>Reset</button>
+      <button class="btn" data-act="run">Run live</button></span></div>
+    <pre class="code"><div class="band band-blue"><span class="t-com"># fizzbuzz.blue - a Blue-only program. No Yellow needed for plain logic.</span>
+
+<span class="t-kw">class</span> Counter:
+    <span class="t-kw">def</span> __init__(self):
+        self.fizz = <span class="t-num">0</span>
+        self.buzz = <span class="t-num">0</span>
+
+c = Counter()
+<span class="t-kw">for</span> n <span class="t-kw">in</span> <span class="t-bi">range</span>(<span class="t-num">1</span>, <span class="t-num">21</span>):
+    <span class="t-kw">if</span> n % <span class="t-num">15</span> == <span class="t-num">0</span>:
+        <span class="t-bi">print</span>(<span class="t-str">&quot;FizzBuzz&quot;</span>)
+        c.fizz += <span class="t-num">1</span>
+        c.buzz += <span class="t-num">1</span>
+    <span class="t-kw">elif</span> n % <span class="t-num">3</span> == <span class="t-num">0</span>:
+        <span class="t-bi">print</span>(<span class="t-str">&quot;Fizz&quot;</span>)
+        c.fizz += <span class="t-num">1</span>
+    <span class="t-kw">elif</span> n % <span class="t-num">5</span> == <span class="t-num">0</span>:
+        <span class="t-bi">print</span>(<span class="t-str">&quot;Buzz&quot;</span>)
+        c.buzz += <span class="t-num">1</span>
+    <span class="t-kw">else</span>:
+        <span class="t-bi">print</span>(n)
+
+<span class="t-bi">print</span>(<span class="t-str">&quot;fizz count:&quot;</span>, c.fizz, <span class="t-str">&quot;| buzz count:&quot;</span>, c.buzz)</div></pre>
+    <textarea class="editor" spellcheck="false" hidden></textarea>
+    
+    <div class="bar"><span class="lbl">Output <span class="tag out-tag">recorded</span></span></div>
+    <pre class="output">1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz
+16
+17
+Fizz
+19
+Buzz
+fizz count: 6 | buzz count: 4</pre>
+  </div>
+</details>
+
+<details class="ex" data-file="broken_no_blue.pyd" data-extra='[]'>
+  <summary><span class="ex-name">broken_no_blue.pyd</span><span class="ex-desc">Yellow forgot blue() at the end</span><span class="badge bad">error demo</span></summary>
+  <div class="ex-body">
+    <div class="bar"><span class="lbl">Program</span><span class="js-flex tools">
+      <button class="btn ghost" data-act="edit">Edit</button>
+      <button class="btn ghost" data-act="reset" hidden>Reset</button>
+      <button class="btn" data-act="run">Run live</button></span></div>
+    <pre class="code"><div class="band band-none"><span class="t-com"># broken_no_blue.pyd - shows the rule: Yellow forgot to end with blue().</span>
+<span class="t-com"># Run it to see the error.</span></div><div class="band band-yellow"><span class="t-sec t-sec-yellow">:: yellow ::</span>
+<span class="t-fn">give</span>(<span class="t-str">&quot;x&quot;</span>, <span class="t-num">41</span>)
+<span class="t-bi">print</span>(<span class="t-str">&quot;Yellow is done... but never ran Blue&quot;</span>)</div><div class="band band-blue"><span class="t-sec t-sec-blue">:: blue ::</span>
+<span class="t-bi">print</span>(x + <span class="t-num">1</span>)</div></pre>
+    <textarea class="editor" spellcheck="false" hidden></textarea>
+    
+    <div class="bar"><span class="lbl">Output <span class="tag out-tag">recorded</span></span></div>
+    <pre class="output"><span class="err err-yellow"><b>[yellow]</b> broken_no_blue.pyd:6  Yellow must end by executing Blue: put  blue()  as the last line. Without it, nothing you give() is registered.</span></pre>
+  </div>
+</details>
+
+<details class="ex" data-file="broken_blue_text.pyd" data-extra='[]'>
+  <summary><span class="ex-name">broken_blue_text.pyd</span><span class="ex-desc">Blue tried to manage text</span><span class="badge bad">error demo</span></summary>
+  <div class="ex-body">
+    <div class="bar"><span class="lbl">Program</span><span class="js-flex tools">
+      <button class="btn ghost" data-act="edit">Edit</button>
+      <button class="btn ghost" data-act="reset" hidden>Reset</button>
+      <button class="btn" data-act="run">Run live</button></span></div>
+    <pre class="code"><div class="band band-none"><span class="t-com"># broken_blue_text.pyd - shows the rule: Blue tried to manage text.</span>
+<span class="t-com"># Run it to see the error, then move the .split() into Yellow.</span></div><div class="band band-yellow"><span class="t-sec t-sec-yellow">:: yellow ::</span>
+<span class="t-fn">give</span>(<span class="t-str">&quot;sentence&quot;</span>, <span class="t-str">&quot;blue does not split strings&quot;</span>)
+<span class="t-fn">blue</span>()</div><div class="band band-blue"><span class="t-sec t-sec-blue">:: blue ::</span>
+words = sentence.split()
+<span class="t-bi">print</span>(<span class="t-bi">len</span>(words))</div></pre>
+    <textarea class="editor" spellcheck="false" hidden></textarea>
+    
+    <div class="bar"><span class="lbl">Output <span class="tag out-tag">recorded</span></span></div>
+    <pre class="output"><span class="err err-blue"><b>[blue]</b> broken_blue_text.pyd:9  &#x27;.split()&#x27; is text managing - that&#x27;s Yellow&#x27;s job. Do it in Yellow and give() the result.</span></pre>
+  </div>
+</details>
+</section>
+
+<section class="panel" id="p-ai">
+  <h2>Connect your AI</h2>
+  <div class="connect">
+    <div class="chead">
+      <div class="link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Python Disconnected logo">
+  
+  <rect x="0.5" y="0.5" width="63" height="63" rx="14.5" fill="#15171e" stroke="#ffffff" stroke-opacity="0.1"/>
+  <!-- Yellow Python: head and upper curve -->
+  <path d="M42 15.2 C32 10.8 17 12.6 17 22.4 C17 28.6 22.6 30.4 26.6 31" fill="none" stroke="#f5c33b" stroke-width="8.6" stroke-linecap="round"/>
+  <ellipse cx="45.2" cy="15.6" rx="7" ry="6.2" fill="#f5c33b"/>
+  <circle cx="47.2" cy="13.6" r="1.7" fill="#15171e"/>
+  <path d="M52 16.4 L56.2 15 M52 16.4 L55.8 18.8" stroke="#ff6b6b" stroke-width="1.4" stroke-linecap="round"/>
+  <!-- Blue Python: lower curve and tapered tail -->
+  <path d="M37.4 33 C42 33.8 47 36 47 42 C47 50.2 36 52.6 25 51" fill="none" stroke="#4f86ff" stroke-width="8.6" stroke-linecap="round"/>
+  <path d="M25.6 46.7 C20 46 15 46.6 10.5 49.2 C15 51.4 20 55.6 25.2 55.3 Z" fill="#4f86ff"/>
+  <!-- the disconnect spark -->
+  <path d="M33.6 26.2 L30.2 32 L33.8 32 L30.4 37.8" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<span class="plug">⇄</span><div class="aibox">AI</div></div>
+      <div><b>Sign in to connect your AI</b><span>No account needed. Your AI connects by reading this folder, then writes Python Disconnected files for you.</span></div>
+    </div>
+    <label class="field js-block"><span>What should the program do?</span>
+      <input id="ai-desc" value="split a restaurant bill between friends, with a tip" autocomplete="off"></label>
+
+    <details class="ai" open>
+      <summary><span class="ai-ico cc">CC</span>Claude Code<small>terminal</small></summary>
+      <div class="ai-body">
+        <ol class="mini"><li>Open a terminal in this folder</li><li>Start Claude Code: <code>claude</code></li><li>Paste your connect code:</li></ol>
+        <div class="codebox"><pre data-code="claude">/pyd &lt;describe your program&gt;</pre><button class="btn js-flex copy">Copy</button></div>
+        <p class="hint">Claude Code reads <code>CLAUDE.md</code> to learn the rules. <code>/pyd</code> writes the file, checks it and runs it.</p>
+      </div>
+    </details>
+
+    <details class="ai">
+      <summary><span class="ai-ico cx">CX</span>Codex<small>terminal</small></summary>
+      <div class="ai-body">
+        <ol class="mini"><li>Open a terminal in this folder</li><li>Paste your connect code:</li></ol>
+        <div class="codebox"><pre data-code="codex">codex "Make a Python Disconnected .pyd program that &lt;describe your program&gt;. Follow AGENTS.md, then check and run it with python3 pyd.py."</pre><button class="btn js-flex copy">Copy</button></div>
+        <p class="hint">Codex reads <code>AGENTS.md</code> on its own, so it already knows how Yellow and Blue work.</p>
+      </div>
+    </details>
+
+    <details class="ai">
+      <summary><span class="ai-ico ch">AI</span>Any AI chat<small>ChatGPT, Claude, Gemini…</small></summary>
+      <div class="ai-body">
+        <ol class="mini"><li>Copy the connect code and paste it into the chat</li><li>Put the AI's answer in the <b>Playground</b> and press Run, or save it as a <code>.pyd</code> file</li></ol>
+        <div class="codebox"><pre class="long" data-code="chat">You are writing a program in Python Disconnected, a small language built on Python. Follow these rules exactly.
+
+## The language
+
+A `.pyd` file has two sections, **Yellow first, Blue last**:
+
+```
+:: yellow ::
+&lt;Yellow Python code&gt;
+blue()
+
+:: blue ::
+&lt;Blue Python code&gt;
+```
+
+### Yellow Python (runs first)
+- Full Python 3: `import`, files, web APIs (`urllib`, `json`…), string methods, regex, anything hard.
+- Hands values to Blue with `give(&quot;name&quot;, value)`. The name becomes a variable in Blue.
+- Only basic data may be given: `int`, `float`, `bool`, `None`, `str`, and `list` / `tuple` / `set` / `dict` of those. Never modules, files, responses or custom objects.
+- **Its last line must be exactly `blue()`**, at top level, no arguments, used nowhere else. That line registers everything given and runs Blue. Without it nothing is registered.
+- Relative file paths are resolved from the `.pyd` file&#x27;s own folder.
+
+### Blue Python (runs last)
+- Basic programming only: numbers, variables, `if`/`elif`/`else`, `for`/`while`, functions, `lambda`, classes, lists, dicts, sets, tuples, `print`, f-strings.
+- Allowed builtins: `print range len int float str bool list dict set tuple abs min max sum round sorted reversed enumerate zip map filter any all isinstance divmod pow` and common exception types.
+- **Forbidden in Blue:** `import`, `open`, `input`, `eval`, `exec`, `getattr`, `type`, `format`, `repr`, `chr`, `ord`, `with` blocks, `async`, any `_hidden` / `__dunder__` attribute, and **all text methods**: `split rsplit splitlines join replace strip lstrip rstrip lower upper title capitalize casefold swapcase find rfind startswith endswith format format_map encode decode center ljust rjust zfill partition rpartition translate maketrans expandtabs isalpha isdigit isnumeric isalnum isspace isupper islower istitle removeprefix removesuffix`.
+- So: do all text cleaning, splitting, joining and parsing in Yellow, and give Blue ready-made values. Blue may still `print` strings and use f-strings.
+
+A `.blue` file is a Blue-only program (no sections, nothing given).
+
+## How to split work
+1. Put every outside-world or text task in Yellow: fetching APIs, reading files, parsing, string formatting that needs methods.
+2. `give()` Blue only the plain data it needs, with clear names.
+3. Put calculations, decisions, loops and output in Blue.
+4. If an API might be unreachable, wrap it in `try/except` in Yellow and fall back to sample data.
+
+## Example
+
+```
+:: yellow ::
+import json
+data = json.loads(&#x27;{&quot;scores&quot;: [12, 7, 19]}&#x27;)
+give(&quot;scores&quot;, data[&quot;scores&quot;])
+give(&quot;player&quot;, &quot;Ada&quot;)
+blue()
+
+:: blue ::
+best = max(scores)
+print(f&quot;{player}&#x27;s best score: {best}&quot;)
+if best &gt; 15:
+    print(&quot;High score!&quot;)
+```
+
+Reply with the complete .pyd file in a single code block, then one line explaining how Yellow and Blue split the work.
+
+The program should: &lt;describe your program&gt;</pre><button class="btn js-flex copy">Copy</button></div>
+        <p class="hint">The same prompt is in <code>AI-PROMPT.txt</code> in this folder.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="panel" id="p-play">
+  <h2>Playground</h2>
+  <p class="nojs status">The Playground needs a browser that runs scripts.</p>
+  <div class="js-block">
+    <div class="bar"><span class="lbl">playground.pyd <span class="tag">paste your AI's answer here</span></span><span class="tools js-flex"><button class="btn ghost" id="pg-clear">Clear</button><button class="btn" id="pg-run">Run live</button></span></div>
+    <textarea class="editor" id="pg-code" spellcheck="false">:: yellow ::
+# Anything hard happens here
+prices_text = "4.50, 12.00, 3.25, 8.75"
+prices = [float(p) for p in prices_text.split(",")]
+give("prices", prices)
+blue()
+
+:: blue ::
+total = sum(prices)
+print("Items:", len(prices))
+print("Total:", round(total, 2))
+if total > 25:
+    print("Free shipping!")
+else:
+    print("Add", round(25 - total, 2), "more for free shipping")
+</textarea>
+    <div class="bar"><span class="lbl">Output</span><span class="status" id="pg-status"></span></div>
+    <pre class="output" id="pg-out"><span class="dim">Press Run live. The first run loads Python into your browser (needs internet).</span></pre>
+  </div>
+</section>
+
+<section class="panel" id="p-local">
+  <h2>Run locally</h2>
+  <div class="local">
+    <ol>
+      <li>Install Python 3.8 or newer. Nothing else.</li>
+      <li>In a terminal in this folder, run an example:<pre>python3 pyd.py run examples/word_stats.pyd</pre></li>
+      <li>Start your own program:<pre>python3 pyd.py new myprogram
+python3 pyd.py run myprogram.pyd</pre></li>
+      <li>Check the rules without running:<pre>python3 pyd.py check myprogram.pyd</pre></li>
+    </ol>
+    <p>Blue's limits are language rules, not a security sandbox. Don't run programs you don't trust.</p>
+  </div>
+</section>
+
+<footer>Python Disconnected 1.0 · works offline · live runs load Python from the web the first time</footer>
+</div>
+
+<script type="text/plain" id="pyd-src">#!/usr/bin/env python3
+"""
+Python Disconnected (pyd)
+=========================
+
+One language, split in two:
+
+  BLUE PYTHON   - basic programming only: math, variables, if/else, loops,
+                  functions, lists/dicts, print. No imports, no files, no
+                  network, no text managing (split, replace, strip, ...).
+
+  YELLOW PYTHON - full Python: APIs, files, text managing, imports, anything
+                  hard. It hands values to Blue with  give("name", value)
+                  and MUST end by running Blue with  blue()  as its very last
+                  line. If it doesn't, nothing it gave is registered and
+                  Blue never runs.
+
+A .pyd file has two sections, Yellow first, Blue last:
+
+    :: yellow ::
+    import json
+    data = json.loads('{"a": 2, "b": 3}')
+    give("a", data["a"])
+    give("b", data["b"])
+    blue()
+
+    :: blue ::
+    print(a + b)
+
+A .blue file is a Blue-only program (nothing is given to it).
+
+Usage:
+    python3 pyd.py run   program.pyd     run a program
+    python3 pyd.py check program.pyd     check the rules without running
+    python3 pyd.py new   name            create name.pyd from a template
+"""
+
+import ast
+import re
+import sys
+import os
+
+VERSION = "1.0"
+
+# ----------------------------------------------------------------- colours ---
+_TTY = sys.stdout.isatty() and os.environ.get("NO_COLOR") is None
+def _c(code, s): return f"\033[{code}m{s}\033[0m" if _TTY else s
+BLUE_TAG   = _c("1;34", "[blue]")
+YELLOW_TAG = _c("1;33", "[yellow]")
+PYD_TAG    = _c("1;35", "[pyd]")
+
+
+class PydError(Exception):
+    """A Python Disconnected rule was broken."""
+    def __init__(self, side, msg, line=None, src_name=None):
+        self.side, self.msg, self.line, self.src_name = side, msg, line, src_name
+        super().__init__(msg)
+
+    def __str__(self):
+        tag = {"blue": BLUE_TAG, "yellow": YELLOW_TAG}.get(self.side, PYD_TAG)
+        where = ""
+        if self.src_name:
+            where = f" {self.src_name}" + (f":{self.line}" if self.line else "")
+        return f"{tag}{where}  {self.msg}"
+
+
+# =============================================================== BLUE RULES ===
+
+# Builtins Blue is allowed to use: basic programming only.
+BLUE_BUILTINS = {
+    name: getattr(__builtins__, name) if not isinstance(__builtins__, dict)
+    else __builtins__[name]
+    for name in [
+        "print", "range", "len", "int", "float", "str", "bool", "list",
+        "dict", "set", "tuple", "abs", "min", "max", "sum", "round",
+        "sorted", "reversed", "enumerate", "zip", "map", "filter", "any",
+        "all", "isinstance", "divmod", "pow", "True", "False", "None",
+        "Exception", "ValueError", "TypeError", "KeyError", "IndexError",
+        "ZeroDivisionError", "StopIteration", "__build_class__",
+    ]
+}
+
+# Names Blue may never touch (they reach outside the program).
+BLUE_FORBIDDEN_NAMES = {
+    "open", "input", "eval", "exec", "compile", "__import__", "globals",
+    "locals", "vars", "getattr", "setattr", "delattr", "breakpoint", "help",
+    "memoryview", "bytes", "bytearray", "chr", "ord", "format", "repr",
+    "ascii", "hash", "id", "type", "object", "super", "exit", "quit",
+}
+
+# Text-managing methods: that's Yellow's job.
+BLUE_TEXT_METHODS = {
+    "split", "rsplit", "splitlines", "join", "replace", "strip", "lstrip",
+    "rstrip", "lower", "upper", "title", "capitalize", "casefold",
+    "swapcase", "find", "rfind", "startswith", "endswith",
+    "format", "format_map", "encode", "decode", "center", "ljust", "rjust",
+    "zfill", "partition", "rpartition", "translate", "maketrans",
+    "expandtabs", "isalpha", "isdigit", "isnumeric", "isalnum", "isspace",
+    "isupper", "islower", "istitle", "removeprefix", "removesuffix",
+}
+
+
+class BlueChecker(ast.NodeVisitor):
+    def __init__(self, src_name):
+        self.src_name = src_name
+
+    def fail(self, node, msg):
+        raise PydError("blue", msg, getattr(node, "lineno", None), self.src_name)
+
+    def visit_Import(self, node):
+        self.fail(node, "Blue can't import anything. Do it in Yellow and give() the result.")
+    visit_ImportFrom = visit_Import
+
+    def visit_Name(self, node):
+        if node.id in BLUE_FORBIDDEN_NAMES:
+            self.fail(node, f"'{node.id}' is not basic programming. Move it to Yellow.")
+        if node.id in ("give", "blue"):
+            self.fail(node, f"'{node.id}()' only exists in Yellow.")
+        self.generic_visit(node)
+
+    def visit_Attribute(self, node):
+        if node.attr.startswith("_"):
+            self.fail(node, f"Blue can't use hidden attributes ('{node.attr}').")
+        if node.attr in BLUE_TEXT_METHODS:
+            self.fail(node, f"'.{node.attr}()' is text managing - that's Yellow's job. "
+                            f"Do it in Yellow and give() the result.")
+        self.generic_visit(node)
+
+    def visit_With(self, node):
+        self.fail(node, "'with' blocks are for files/resources - use Yellow.")
+    visit_AsyncWith = visit_With
+
+    def visit_AsyncFunctionDef(self, node):
+        self.fail(node, "async code belongs in Yellow.")
+    visit_Await = visit_AsyncFunctionDef
+
+
+# Types that may cross from Yellow to Blue.
+def _blue_safe(value, depth=0):
+    if depth > 50:
+        return False
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return True
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return all(_blue_safe(v, depth + 1) for v in value)
+    if isinstance(value, dict):
+        return all(_blue_safe(k, depth + 1) and _blue_safe(v, depth + 1)
+                   for k, v in value.items())
+    return False
+
+
+# ============================================================= YELLOW RULES ===
+
+def check_yellow(tree, src_name):
+    """Yellow must END with blue(), and call blue() nowhere else."""
+    body = tree.body
+    last = body[-1] if body else None
+    ends_with_blue = (
+        isinstance(last, ast.Expr) and isinstance(last.value, ast.Call)
+        and isinstance(last.value.func, ast.Name) and last.value.func.id == "blue"
+    )
+    if not ends_with_blue:
+        line = getattr(last, "end_lineno", None)
+        raise PydError("yellow",
+            "Yellow must end by executing Blue: put  blue()  as the last line. "
+            "Without it, nothing you give() is registered.", line, src_name)
+    if last.value.args or last.value.keywords:
+        raise PydError("yellow", "blue() takes no arguments.", last.lineno, src_name)
+
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                and node.func.id == "blue" and node is not last.value):
+            raise PydError("yellow",
+                "blue() can only be called once, as the very last line of Yellow.",
+                node.lineno, src_name)
+
+
+# ================================================================= PARSING ===
+
+SECTION_RE = re.compile(r"^\s*::\s*(yellow|blue)\s*::\s*$", re.IGNORECASE)
+
+
+def split_sections(text, src_name):
+    """Return {'yellow': (code, first_line), 'blue': (code, first_line)}."""
+    sections, order, current, buf, start = {}, [], None, [], 1
+    for i, line in enumerate(text.splitlines(), 1):
+        m = SECTION_RE.match(line)
+        if m:
+            if current:
+                sections[current] = ("\n".join(buf), start)
+            current = m.group(1).lower()
+            if current in sections:
+                raise PydError("pyd", f"Section ':: {current} ::' appears twice.", i, src_name)
+            order.append(current)
+            buf, start = [], i + 1
+        elif current is None:
+            if line.strip() and not line.strip().startswith("#"):
+                raise PydError("pyd", "Code must be inside a ':: yellow ::' or ':: blue ::' section.",
+                               i, src_name)
+        else:
+            buf.append(line)
+    if current:
+        sections[current] = ("\n".join(buf), start)
+
+    if "blue" not in sections:
+        raise PydError("pyd", "Missing ':: blue ::' section.", None, src_name)
+    if order and order[-1] != "blue":
+        raise PydError("pyd", "':: blue ::' must be the last section - Blue always runs at the end.",
+                       None, src_name)
+    return sections
+
+
+def _parse(code, first_line, side, src_name):
+    try:
+        tree = ast.parse(code, filename=src_name)
+    except SyntaxError as e:
+        line = (e.lineno or 1) + first_line - 1
+        raise PydError(side, f"Syntax error: {e.msg}", line, src_name)
+    ast.increment_lineno(tree, first_line - 1)
+    return tree
+
+
+def _compile(tree, src_name):
+    return compile(tree, src_name, "exec")
+
+
+# ================================================================= RUNNING ===
+
+def _run_blue(blue_tree, src_name, given):
+    BlueChecker(src_name).visit(blue_tree)
+    env = {"__builtins__": dict(BLUE_BUILTINS), "__name__": "__blue__"}
+    env.update(given)
+    try:
+        exec(_compile(blue_tree, src_name), env)
+    except PydError:
+        raise
+    except Exception as e:
+        raise PydError("blue", f"{type(e).__name__}: {e}", _err_line(e, src_name), src_name)
+
+
+def _err_line(exc, src_name):
+    tb, line = exc.__traceback__, None
+    while tb:
+        if tb.tb_frame.f_code.co_filename == src_name:
+            line = tb.tb_lineno
+        tb = tb.tb_next
+    return line
+
+
+def load(path):
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    name = os.path.basename(path)
+
+    if path.endswith(".blue"):
+        blue_tree = _parse(text, 1, "blue", name)
+        BlueChecker(name).visit(blue_tree)
+        return name, None, blue_tree
+
+    sections = split_sections(text, name)
+    yellow_tree = None
+    if "yellow" in sections:
+        code, start = sections["yellow"]
+        yellow_tree = _parse(code, start, "yellow", name)
+        check_yellow(yellow_tree, name)
+    code, start = sections["blue"]
+    blue_tree = _parse(code, start, "blue", name)
+    BlueChecker(name).visit(blue_tree)
+    return name, yellow_tree, blue_tree
+
+
+def run(path):
+    name, yellow_tree, blue_tree = load(path)
+
+    if yellow_tree is None:
+        _run_blue(blue_tree, name, {})
+        return
+
+    pending = {}          # values queued by give(); only registered by blue()
+    state = {"ran": False}
+
+    def give(var_name, value):
+        if not isinstance(var_name, str) or not var_name.isidentifier():
+            raise PydError("yellow", f"give() needs a valid variable name, got {var_name!r}.")
+        if var_name in BLUE_BUILTINS or var_name in BLUE_FORBIDDEN_NAMES:
+            raise PydError("yellow", f"'{var_name}' is a reserved name in Blue.")
+        if not _blue_safe(value):
+            raise PydError("yellow",
+                f"Can't give '{var_name}' to Blue: a {type(value).__name__} isn't basic data. "
+                "Give numbers, text, True/False/None, or lists/dicts of those.")
+        pending[var_name] = value
+
+    def blue():
+        state["ran"] = True
+        registered = dict(pending)  # this is the moment gifts are registered
+        _run_blue(blue_tree, name, registered)
+
+    env = {"__name__": "__yellow__", "give": give, "blue": blue}
+    yellow_dir = os.path.dirname(os.path.abspath(path))
+    old_cwd = os.getcwd()
+    os.chdir(yellow_dir)  # Yellow reads files relative to the program
+    try:
+        exec(_compile(yellow_tree, name), env)
+    except PydError as e:
+        if e.src_name is None:
+            e.src_name, e.line = name, _err_line(e, name)
+        raise
+    except SystemExit as e:
+        if not state["ran"]:
+            raise PydError("yellow", "Yellow exited before executing Blue - nothing was registered.",
+                           _err_line(e, name), name)
+    except Exception as e:
+        raise PydError("yellow", f"{type(e).__name__}: {e}", _err_line(e, name), name)
+    finally:
+        os.chdir(old_cwd)
+
+    if not state["ran"]:  # e.g. Yellow returned early via sys.exit
+        raise PydError("yellow", "Yellow finished without executing Blue - nothing was registered.",
+                       None, name)
+
+
+# ===================================================================== CLI ===
+
+TEMPLATE = '''\
+# {name}.pyd - a Python Disconnected program
+
+:: yellow ::
+# Full Python lives here: APIs, files, text managing, imports.
+# Hand basic values to Blue with give("name", value).
+text = "hello disconnected world"
+words = text.split()
+
+give("words", words)
+give("count", len(words))
+blue()   # always the last line of Yellow
+
+:: blue ::
+# Basic programming only. Variables given by Yellow are ready to use.
+print("Blue received", count, "words:")
+for i, w in enumerate(words):
+    print(i + 1, w)
+'''
+
+
+def main(argv):
+    if len(argv) < 2 or argv[1] in ("-h", "--help", "help"):
+        print(__doc__)
+        return 0
+    if argv[1] in ("-v", "--version"):
+        print(f"Python Disconnected {VERSION}")
+        return 0
+
+    cmd = argv[1]
+    if cmd == "new":
+        if len(argv) != 3:
+            print(f"{PYD_TAG} usage: pyd new <name>"); return 2
+        target = argv[2] if argv[2].endswith(".pyd") else argv[2] + ".pyd"
+        if os.path.exists(target):
+            print(f"{PYD_TAG} {target} already exists"); return 1
+        with open(target, "w", encoding="utf-8") as f:
+            f.write(TEMPLATE.format(name=os.path.splitext(os.path.basename(target))[0]))
+        print(f"{PYD_TAG} created {target}")
+        return 0
+
+    if cmd in ("run", "check") and len(argv) == 3:
+        path = argv[2]
+    elif cmd.endswith((".pyd", ".blue")) and len(argv) == 2:
+        cmd, path = "run", cmd
+    else:
+        print(f"{PYD_TAG} usage: pyd run|check <file.pyd|file.blue>"); return 2
+
+    if not os.path.isfile(path):
+        print(f"{PYD_TAG} file not found: {path}"); return 1
+    try:
+        if cmd == "check":
+            load(path)
+            print(f"{PYD_TAG} {path}: OK - Yellow and Blue follow the rules")
+        else:
+            run(path)
+    except PydError as e:
+        print(e, file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
+</script>
+<script>
+(function(){
+  var FILES = {"word_stats.pyd": "# word_stats.pyd - Yellow manages the text, Blue does the logic.\n\n:: yellow ::\n# Reading files and splitting text is \"text managing\" -> Yellow's job.\nwith open(\"story.txt\", encoding=\"utf-8\") as f:\n    text = f.read()\n\nwords = [w.strip(\".,!?;:\\\"'\").lower() for w in text.split()]\nwords = [w for w in words if w]\n\nlengths = [len(w) for w in words]\n\ncounts = {}\nfor w in words:\n    counts[w] = counts.get(w, 0) + 1\n\ngive(\"lengths\", lengths)\ngive(\"counts\", counts)\ngive(\"title\", \"Story statistics\")\nblue()\n\n:: blue ::\n# Pure logic: numbers, loops, dicts, functions. No text methods allowed.\ndef average(nums):\n    if len(nums) == 0:\n        return 0\n    return sum(nums) / len(nums)\n\ndef top(d, n):\n    pairs = sorted(d.items(), key=lambda p: p[1], reverse=True)\n    return pairs[:n]\n\nprint(\"===\", title, \"===\")\nprint(\"Total words:  \", len(lengths))\nprint(\"Unique words: \", len(counts))\nprint(\"Average length:\", round(average(lengths), 2))\nprint(\"Longest word length:\", max(lengths))\nprint()\nprint(\"Top 5 words:\")\nfor word, n in top(counts, 5):\n    print(\" \", word, \"x\", n)\n", "story.txt": "The blue python lived in a quiet garden. The yellow python lived at the edge of the world,\nwhere the wires and the signals came in. Every evening the yellow python gathered news,\ncleaned it, and passed it to the blue python. The blue python counted, compared and decided.\nNeither python could do the other's work, and neither wanted to. The garden stayed quiet.\n", "weather_api.pyd": "# weather_api.pyd - Yellow calls a web API, Blue decides what to wear.\n# Uses the free Open-Meteo API (no key needed). Falls back to sample data offline.\n\n:: yellow ::\nimport json\nimport urllib.request\n\nCITY, LAT, LON = \"Rome\", 41.89, 12.48\nurl = (\"https://api.open-meteo.com/v1/forecast\"\n       f\"?latitude={LAT}&longitude={LON}\"\n       \"&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max\"\n       \"&timezone=auto&forecast_days=5\")\n\ntry:\n    with urllib.request.urlopen(url, timeout=8) as r:\n        daily = json.load(r)[\"daily\"]\n    source = \"live\"\nexcept Exception:\n    daily = {\n        \"time\": [\"Day 1\", \"Day 2\", \"Day 3\", \"Day 4\", \"Day 5\"],\n        \"temperature_2m_max\": [22.1, 19.4, 15.0, 24.8, 27.3],\n        \"temperature_2m_min\": [13.0, 12.2, 9.1, 14.5, 16.0],\n        \"precipitation_probability_max\": [10, 65, 80, 5, 0],\n    }\n    source = \"sample (offline)\"\n\ngive(\"city\", CITY)\ngive(\"source\", source)\ngive(\"days\", daily[\"time\"])\ngive(\"highs\", daily[\"temperature_2m_max\"])\ngive(\"lows\", daily[\"temperature_2m_min\"])\ngive(\"rain\", daily[\"precipitation_probability_max\"])\nblue()\n\n:: blue ::\ndef outfit(high, rain_chance):\n    if rain_chance >= 50:\n        extra = \" + umbrella\"\n    else:\n        extra = \"\"\n    if high >= 25:\n        return \"t-shirt\" + extra\n    elif high >= 18:\n        return \"light jacket\" + extra\n    else:\n        return \"warm coat\" + extra\n\nprint(\"Forecast for\", city, \"-\", source)\nfor i in range(len(days)):\n    print(days[i], \"|\", lows[i], \"to\", highs[i], \"C |\", rain[i], \"% rain ->\",\n          outfit(highs[i], rain[i]))\n\nwarmest = 0\nfor i in range(len(highs)):\n    if highs[i] > highs[warmest]:\n        warmest = i\nprint(\"Warmest day:\", days[warmest])\n", "fizzbuzz.blue": "# fizzbuzz.blue - a Blue-only program. No Yellow needed for plain logic.\n\nclass Counter:\n    def __init__(self):\n        self.fizz = 0\n        self.buzz = 0\n\nc = Counter()\nfor n in range(1, 21):\n    if n % 15 == 0:\n        print(\"FizzBuzz\")\n        c.fizz += 1\n        c.buzz += 1\n    elif n % 3 == 0:\n        print(\"Fizz\")\n        c.fizz += 1\n    elif n % 5 == 0:\n        print(\"Buzz\")\n        c.buzz += 1\n    else:\n        print(n)\n\nprint(\"fizz count:\", c.fizz, \"| buzz count:\", c.buzz)\n", "broken_no_blue.pyd": "# broken_no_blue.pyd - shows the rule: Yellow forgot to end with blue().\n# Run it to see the error.\n\n:: yellow ::\ngive(\"x\", 41)\nprint(\"Yellow is done... but never ran Blue\")\n\n:: blue ::\nprint(x + 1)\n", "broken_blue_text.pyd": "# broken_blue_text.pyd - shows the rule: Blue tried to manage text.\n# Run it to see the error, then move the .split() into Yellow.\n\n:: yellow ::\ngive(\"sentence\", \"blue does not split strings\")\nblue()\n\n:: blue ::\nwords = sentence.split()\nprint(len(words))\n"};
+  var CHAT_PROMPT = "You are writing a program in Python Disconnected, a small language built on Python. Follow these rules exactly.\n\n## The language\n\nA `.pyd` file has two sections, **Yellow first, Blue last**:\n\n```\n:: yellow ::\n<Yellow Python code>\nblue()\n\n:: blue ::\n<Blue Python code>\n```\n\n### Yellow Python (runs first)\n- Full Python 3: `import`, files, web APIs (`urllib`, `json`\u2026), string methods, regex, anything hard.\n- Hands values to Blue with `give(\"name\", value)`. The name becomes a variable in Blue.\n- Only basic data may be given: `int`, `float`, `bool`, `None`, `str`, and `list` / `tuple` / `set` / `dict` of those. Never modules, files, responses or custom objects.\n- **Its last line must be exactly `blue()`**, at top level, no arguments, used nowhere else. That line registers everything given and runs Blue. Without it nothing is registered.\n- Relative file paths are resolved from the `.pyd` file's own folder.\n\n### Blue Python (runs last)\n- Basic programming only: numbers, variables, `if`/`elif`/`else`, `for`/`while`, functions, `lambda`, classes, lists, dicts, sets, tuples, `print`, f-strings.\n- Allowed builtins: `print range len int float str bool list dict set tuple abs min max sum round sorted reversed enumerate zip map filter any all isinstance divmod pow` and common exception types.\n- **Forbidden in Blue:** `import`, `open`, `input`, `eval`, `exec`, `getattr`, `type`, `format`, `repr`, `chr`, `ord`, `with` blocks, `async`, any `_hidden` / `__dunder__` attribute, and **all text methods**: `split rsplit splitlines join replace strip lstrip rstrip lower upper title capitalize casefold swapcase find rfind startswith endswith format format_map encode decode center ljust rjust zfill partition rpartition translate maketrans expandtabs isalpha isdigit isnumeric isalnum isspace isupper islower istitle removeprefix removesuffix`.\n- So: do all text cleaning, splitting, joining and parsing in Yellow, and give Blue ready-made values. Blue may still `print` strings and use f-strings.\n\nA `.blue` file is a Blue-only program (no sections, nothing given).\n\n## How to split work\n1. Put every outside-world or text task in Yellow: fetching APIs, reading files, parsing, string formatting that needs methods.\n2. `give()` Blue only the plain data it needs, with clear names.\n3. Put calculations, decisions, loops and output in Blue.\n4. If an API might be unreachable, wrap it in `try/except` in Yellow and fall back to sample data.\n\n## Example\n\n```\n:: yellow ::\nimport json\ndata = json.loads('{\"scores\": [12, 7, 19]}')\ngive(\"scores\", data[\"scores\"])\ngive(\"player\", \"Ada\")\nblue()\n\n:: blue ::\nbest = max(scores)\nprint(f\"{player}'s best score: {best}\")\nif best > 15:\n    print(\"High score!\")\n```\n\nReply with the complete .pyd file in a single code block, then one line explaining how Yellow and Blue split the work.\n\nThe program should: ";
+  var PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v0.27.6/full/pyodide.js";
+  var pyPromise = null;
+
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function colorOut(text){
+    return text.replace(/\n+$/,'').split('\n').map(function(line){
+      var m = line.match(/^\[(blue|yellow|pyd|preview)\](.*)$/);
+      if(!m) return esc(line);
+      var side = m[1]==='preview' ? 'pyd' : m[1];
+      return '<span class="err err-'+side+'"><b>['+m[1]+']</b>'+esc(m[2])+'</span>';
+    }).join('\n');
+  }
+
+  /* tabs */
+  var tabs = document.querySelectorAll('.tab');
+  function show(name){
+    tabs.forEach(function(t){ t.setAttribute('aria-selected', t.dataset.tab===name ? 'true':'false'); });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id==='p-'+name); });
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.dataset.tab); }); });
+
+  /* python in the browser */
+  function loadPy(status){
+    if(pyPromise) return pyPromise;
+    pyPromise = new Promise(function(resolve, reject){
+      status('Loading Python into the browser… (first time only)');
+      var s = document.createElement('script');
+      s.src = PYODIDE_URL;
+      s.onerror = function(){ reject(new Error('could not download Python (offline, or this viewer blocks it)')); };
+      s.onload = function(){
+        loadPyodide().then(function(py){
+          py.FS.mkdirTree('/pyd');
+          py.FS.writeFile('/pyd/pyd.py', document.getElementById('pyd-src').textContent);
+          py.runPython("import os, sys\nos.environ['NO_COLOR']='1'\nsys.path.insert(0,'/pyd')\nimport pyd");
+          resolve(py);
+        }).catch(reject);
+      };
+      document.head.appendChild(s);
+    });
+    pyPromise.catch(function(){ pyPromise = null; });
+    return pyPromise;
+  }
+  function runProgram(name, code, extras, status){
+    return loadPy(status).then(function(py){
+      status('Running…');
+      try { py.FS.mkdirTree('/work'); } catch(e){}
+      extras.forEach(function(e){ py.FS.writeFile('/work/'+e, FILES[e]); });
+      py.FS.writeFile('/work/'+name, code);
+      py.globals.set('_target', '/work/'+name);
+      return py.runPython(
+        "import io, contextlib, pyd\n_buf = io.StringIO()\n" +
+        "with contextlib.redirect_stdout(_buf), contextlib.redirect_stderr(_buf):\n" +
+        "    pyd.main(['pyd', 'run', _target])\n_buf.getvalue()");
+    });
+  }
+
+  /* examples */
+  document.querySelectorAll('details.ex').forEach(function(ex){
+    var name = ex.dataset.file, extras = JSON.parse(ex.dataset.extra || '[]');
+    var pre = ex.querySelector('pre.code'), ed = ex.querySelector('textarea.editor');
+    var out = ex.querySelector('pre.output'), tag = ex.querySelector('.out-tag');
+    var runBtn = ex.querySelector('[data-act=run]'), editBtn = ex.querySelector('[data-act=edit]');
+    var resetBtn = ex.querySelector('[data-act=reset]');
+    var recorded = out.innerHTML;
+    ed.value = FILES[name];
+    editBtn.addEventListener('click', function(){
+      var editing = ed.hidden;
+      ed.hidden = !editing; pre.hidden = editing; resetBtn.hidden = !editing;
+      editBtn.textContent = editing ? 'View' : 'Edit';
+      if(editing) ed.focus();
+    });
+    resetBtn.addEventListener('click', function(){ ed.value = FILES[name]; });
+    runBtn.addEventListener('click', function(){
+      runBtn.disabled = true;
+      var status = function(msg){ out.innerHTML = '<span class="dim">'+esc(msg)+'</span>'; };
+      runProgram(name, ed.hidden ? FILES[name] : ed.value, extras, status).then(function(text){
+        out.innerHTML = colorOut(text || '(no output)');
+        tag.textContent = 'live'; tag.className = 'tag out-tag live';
+      }).catch(function(err){
+        out.innerHTML = colorOut('[preview] Live run unavailable: ' + err.message + '.\n[preview] Showing the recorded output.') + '\n' + recorded;
+      }).then(function(){ runBtn.disabled = false; });
+    });
+  });
+
+  /* connect AI */
+  var desc = document.getElementById('ai-desc');
+  function shellQuote(s){ return s.replace(/(["\\$`])/g, '\\$1'); }
+  function updateCodes(){
+    var d = desc.value.trim() || 'describe your program';
+    document.querySelector('[data-code=claude]').textContent = '/pyd ' + d;
+    document.querySelector('[data-code=codex]').textContent =
+      'codex "Make a Python Disconnected .pyd program that ' + shellQuote(d) +
+      '. Follow AGENTS.md, then check and run it with python3 pyd.py."';
+    document.querySelector('[data-code=chat]').textContent = CHAT_PROMPT + d;
+  }
+  desc.addEventListener('input', updateCodes);
+  updateCodes();
+
+  function copyText(text){
+    if(navigator.clipboard && window.isSecureContext){ return navigator.clipboard.writeText(text); }
+    return new Promise(function(resolve, reject){
+      var t = document.createElement('textarea');
+      t.value = text; t.setAttribute('readonly',''); t.style.position='fixed'; t.style.opacity='0';
+      document.body.appendChild(t); t.select();
+      try { document.execCommand('copy') ? resolve() : reject(new Error('copy failed')); } catch(e){ reject(e); }
+      document.body.removeChild(t);
+    });
+  }
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click', function(){
+      var text = b.parentNode.querySelector('pre').textContent;
+      copyText(text).then(function(){ b.textContent = 'Copied'; }, function(){ b.textContent = 'Select & copy'; })
+        .then(function(){ setTimeout(function(){ b.textContent = 'Copy'; }, 1600); });
+    });
+  });
+
+  /* playground */
+  var pgRun = document.getElementById('pg-run'), pgCode = document.getElementById('pg-code');
+  document.getElementById('pg-clear').addEventListener('click', function(){ pgCode.value=''; pgCode.focus(); });
+  pgRun.addEventListener('click', function(){
+    var out = document.getElementById('pg-out'), st = document.getElementById('pg-status');
+    var code = pgCode.value;
+    var fenced = code.match(/```[a-zA-Z]*\n([\s\S]*?)```/);   /* AI answers often arrive wrapped in ``` fences */
+    if(fenced){ code = fenced[1]; pgCode.value = code; }
+    pgRun.disabled = true;
+    runProgram('playground.pyd', code, [], function(m){ st.textContent = m; }).then(function(text){
+      out.innerHTML = colorOut(text || '(no output)'); st.textContent = 'live';
+    }).catch(function(err){
+      out.innerHTML = colorOut('[preview] Live run unavailable: ' + err.message + '.'); st.textContent = '';
+    }).then(function(){ pgRun.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>

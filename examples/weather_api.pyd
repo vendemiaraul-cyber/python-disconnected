@@ -1,0 +1,57 @@
+# weather_api.pyd - Yellow calls a web API, Blue decides what to wear.
+# Uses the free Open-Meteo API (no key needed). Falls back to sample data offline.
+
+:: yellow ::
+import json
+import urllib.request
+
+CITY, LAT, LON = "Rome", 41.89, 12.48
+url = ("https://api.open-meteo.com/v1/forecast"
+       f"?latitude={LAT}&longitude={LON}"
+       "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max"
+       "&timezone=auto&forecast_days=5")
+
+try:
+    with urllib.request.urlopen(url, timeout=8) as r:
+        daily = json.load(r)["daily"]
+    source = "live"
+except Exception:
+    daily = {
+        "time": ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+        "temperature_2m_max": [22.1, 19.4, 15.0, 24.8, 27.3],
+        "temperature_2m_min": [13.0, 12.2, 9.1, 14.5, 16.0],
+        "precipitation_probability_max": [10, 65, 80, 5, 0],
+    }
+    source = "sample (offline)"
+
+give("city", CITY)
+give("source", source)
+give("days", daily["time"])
+give("highs", daily["temperature_2m_max"])
+give("lows", daily["temperature_2m_min"])
+give("rain", daily["precipitation_probability_max"])
+blue()
+
+:: blue ::
+def outfit(high, rain_chance):
+    if rain_chance >= 50:
+        extra = " + umbrella"
+    else:
+        extra = ""
+    if high >= 25:
+        return "t-shirt" + extra
+    elif high >= 18:
+        return "light jacket" + extra
+    else:
+        return "warm coat" + extra
+
+print("Forecast for", city, "-", source)
+for i in range(len(days)):
+    print(days[i], "|", lows[i], "to", highs[i], "C |", rain[i], "% rain ->",
+          outfit(highs[i], rain[i]))
+
+warmest = 0
+for i in range(len(highs)):
+    if highs[i] > highs[warmest]:
+        warmest = i
+print("Warmest day:", days[warmest])
