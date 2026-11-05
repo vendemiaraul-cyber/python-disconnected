@@ -4,6 +4,6 @@ __pycache__/
 venv/
 *.egg-info/
 build/
-dist/
+/dist/
 .pytest_cache/
 demo_videos/
