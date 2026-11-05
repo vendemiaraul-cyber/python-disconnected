@@ -20,6 +20,8 @@ including fitting it to **your own data**.
 └──────────────────────────┘
 ```
 
+Project page: [`docs/index.html`](docs/index.html) (served by GitHub Pages from `/docs`).
+
 ## Install & run
 
 ```bash
