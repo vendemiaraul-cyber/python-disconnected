@@ -7,9 +7,43 @@
 --   game/ReplicatedStorage/Config.luau                   -> ModuleScript
 
 local RunService = game:GetService("RunService")
-if not RunService:IsEdit() then return end -- never touch a running playtest
-
 local HttpService = game:GetService("HttpService")
+local LogService = game:GetService("LogService")
+
+---------------------------------------------------------------- Status for Claude
+-- Claude reads this ntfy.sh channel at session start (.claude/hooks/session-start.sh)
+-- to know Studio is open, what's synced, and which errors showed up in Output.
+local STATUS_TOPIC = "pocketstudio-1cfc43541489275a"
+local HEARTBEAT_INTERVAL = 60
+
+local function send(event, data)
+	data = data or {}
+	data.event = event
+	data.place = game.Name
+	task.spawn(function() -- never block Studio on the network
+		pcall(HttpService.PostAsync, HttpService, "https://ntfy.sh/",
+			HttpService:JSONEncode({ topic = STATUS_TOPIC, message = HttpService:JSONEncode(data) }),
+			Enum.HttpContentType.ApplicationJson)
+	end)
+end
+
+-- Forward red Output errors (edit mode and playtests), batched and de-duplicated.
+local mode = RunService:IsEdit() and "edit" or (RunService:IsClient() and "play-client" or "play-server")
+local pendingErrors, seenErrors = {}, {}
+LogService.MessageOut:Connect(function(text, kind)
+	if kind ~= Enum.MessageType.MessageError or seenErrors[text] or #pendingErrors >= 10 then return end
+	seenErrors[text] = true
+	table.insert(pendingErrors, text:sub(1, 300))
+	if #pendingErrors == 1 then
+		task.delay(5, function()
+			local batch = pendingErrors
+			pendingErrors = {}
+			send("errors", { mode = mode, lines = batch })
+		end)
+	end
+end)
+
+if not RunService:IsEdit() then return end -- below: edit mode only, never touch a running playtest
 local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local CollectionService = game:GetService("CollectionService")
 local ScriptEditorService = game:GetService("ScriptEditorService")
@@ -23,6 +57,7 @@ local AUTO_INTERVAL = 90 -- seconds; GitHub allows 60 anonymous API calls per ho
 
 local branch = plugin:GetSetting("branch") or "studio"
 local auto = plugin:GetSetting("auto") == true
+local lowLag = plugin:GetSetting("lowLag") ~= false -- on unless turned off
 local lastSha = nil
 local busy = false
 
@@ -34,7 +69,7 @@ pullButton.ClickableWhenViewportHidden = true
 panelButton.ClickableWhenViewportHidden = true
 
 local widget = plugin:CreateDockWidgetPluginGui("ClaudeSyncPanel",
-	DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, false, 280, 240, 220, 200))
+	DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, false, 280, 280, 220, 240))
 widget.Title = "Claude Sync"
 
 local theme = settings().Studio.Theme
@@ -79,6 +114,7 @@ branchBox.ClearTextOnFocus = false
 branchBox.PlaceholderText = "studio"
 local bigPull = add("TextButton", "Pull Claude's code", 48, C.DialogMainButton, C.DialogMainButtonText)
 local autoButton = add("TextButton", "", 32, C.Button, C.ButtonText)
+local lagButton = add("TextButton", "", 32, C.Button, C.ButtonText)
 local status = add("TextLabel", "Tap Pull after Claude says it pushed.", 70)
 status.BackgroundTransparency = 1
 status.TextWrapped = true
@@ -94,6 +130,24 @@ local function refreshAuto()
 	autoButton.Text = auto and ("Auto-pull: ON (every %ds)"):format(AUTO_INTERVAL) or "Auto-pull: OFF"
 end
 refreshAuto()
+
+-- Low-lag mode: render the edit viewport at the lowest quality, so the PC
+-- encodes a lighter picture for remote desktop. Turning it off restores your setting.
+local function applyLowLag()
+	lagButton.Text = lowLag and "Low-lag mode: ON" or "Low-lag mode: OFF"
+	pcall(function()
+		local rendering = settings().Rendering
+		local saved = plugin:GetSetting("savedQuality")
+		if lowLag then
+			if saved == nil then plugin:SetSetting("savedQuality", rendering.EditQualityLevel.Name) end
+			rendering.EditQualityLevel = Enum.QualityLevel.Level01
+		elseif saved ~= nil then
+			rendering.EditQualityLevel = Enum.QualityLevel[saved]
+			plugin:SetSetting("savedQuality", nil)
+		end
+	end)
+end
+applyLowLag()
 
 ---------------------------------------------------------------- Sync
 local function get(url)
@@ -232,6 +286,7 @@ local function pull(manual)
 			if s > 0 then msg ..= (" %d skipped (not in a service folder)."):format(s) end
 			if a + u + r == 0 then msg = "Already up to date (" .. sha:sub(1, 7) .. ")." end
 			setStatus(msg)
+			if a + u + r > 0 then send("synced", { branch = branch, sha = sha:sub(1, 7) }) end
 		else
 			setStatus(friendly(a))
 		end
@@ -255,6 +310,11 @@ autoButton.Activated:Connect(function()
 	refreshAuto()
 	if auto then task.spawn(pull, false) end
 end)
+lagButton.Activated:Connect(function()
+	lowLag = not lowLag
+	plugin:SetSetting("lowLag", lowLag)
+	applyLowLag()
+end)
 branchBox.FocusLost:Connect(function()
 	local text = branchBox.Text:match("^%s*(.-)%s*$")
 	branch = text ~= "" and text or "studio"
@@ -269,3 +329,16 @@ task.spawn(function()
 		if auto then pull(false) end
 	end
 end)
+
+-- Heartbeat: lets Claude know Studio is open (it treats 3+ minutes of silence as closed).
+local function heartbeat(event)
+	send(event, { placeId = game.PlaceId, branch = branch, synced = lastSha and lastSha:sub(1, 7), auto = auto })
+end
+heartbeat("opened")
+task.spawn(function()
+	while true do
+		task.wait(HEARTBEAT_INTERVAL)
+		heartbeat("heartbeat")
+	end
+end)
+plugin.Unloading:Connect(function() heartbeat("closed") end)

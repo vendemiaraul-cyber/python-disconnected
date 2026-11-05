@@ -58,10 +58,26 @@ The first time you pull, Studio asks whether Claude Sync may reach `api.github.c
 `raw.githubusercontent.com`. Tap **Allow**. Turn on **Auto-pull** in the panel and new
 code comes in by itself about every 90 seconds, with no tapping.
 
+**Claude knows when Studio is open.** While Studio runs, the plugin sends a tiny
+"I'm open" signal to a private [ntfy.sh](https://ntfy.sh) channel once a minute, plus any
+red errors from Output. When you start a Claude session, Claude checks it automatically.
+If Studio is open, Claude gets ready without being asked: it loads your latest game code
+and reads your errors, so you never have to screenshot them.
+
 A test script (`HelloClaude`) comes included. After your first Pull, press Play and you should see a
 spinning purple cube. Ask Claude to remove it whenever you like.
+
+## Less lag
+
+- The PC setup turns off Windows animations and transparency, and picks the high-performance power plan.
+- The plugin's **Low-lag mode** is on by default. It draws Studio's 3D view at the lowest quality, so the
+  remote picture is lighter. Tap it in the panel to switch it off when you want things to look nice.
+- The biggest wins are free: connect the PC to the router with a cable, put the iPhone on 5 GHz Wi-Fi,
+  and use a lower PC screen resolution (for example 1280x720). Close games and video on the PC while you work.
 
 Using regular Claude chat instead of the Code tab? See [CLAUDE-APP-INSTRUCTIONS.md](CLAUDE-APP-INSTRUCTIONS.md)
 for a block of text to paste into a Claude Project.
 
-> This repo is public, so anyone can see the game code. Don't put passwords or keys in it.
+> This repo is public, so anyone can see the game code and the status channel name, which means anyone
+> could see whether Studio is open. Don't put passwords or keys in it.
+> Already ran the setup before this update? Run `START-HERE.bat` again to get the new plugin.

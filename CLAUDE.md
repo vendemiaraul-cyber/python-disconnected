@@ -32,6 +32,21 @@ iPhone app's Code tab (the usual case), unless the user says they're on the PC d
 4. End every reply with the next step for the user, for example:
    **"In Studio, tap Claude → Pull, then press Play."** Say what they should see.
 
+# Knowing when Studio is open
+
+The Claude Sync plugin sends a heartbeat (and any red Output errors) to a
+private ntfy.sh channel. The SessionStart hook (`.claude/hooks/session-start.sh`)
+reads it and adds a **"Pocket Studio status"** note to your context:
+
+- **STUDIO_OPEN**: they're in Studio now, and the hook has already merged `origin/studio`.
+  Be ready to ship: say hi briefly, mention Studio is connected, and ask what to build
+  (or continue the last thing). Keep the loop tight: push, then they Pull and Play.
+- **STUDIO_CLOSED**: work normally. Code syncs the next time they open Studio.
+- **Errors listed**: these are real errors from their Studio. Fix them without asking for screenshots.
+
+Re-run `.claude/hooks/session-start.sh` any time to refresh. Do it after pushing
+(a `synced` event shows up once they've pulled) and whenever they say something broke.
+
 # Style
 
 - Short replies. They're reading on a phone screen. Use plain language, no jargon.
@@ -39,5 +54,6 @@ iPhone app's Code tab (the usual case), unless the user says they're on the PC d
 - Write modern Luau: `task.wait` and `task.spawn`, `game:GetService`, typed where helpful.
   Server-authoritative logic goes in ServerScriptService, never trusting the client.
 - You can't run Studio. Re-read your code for typos and nil errors before pushing.
-  If they report a bug, ask them to open **View → Output** and read or screenshot the red text.
+  If they report a bug, re-run the status hook first. Their errors are usually already there.
+  Only ask them to check **View → Output** if nothing shows up.
 - The repo is **public**. Never commit API keys, cookies, or personal info.

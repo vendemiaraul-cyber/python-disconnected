@@ -33,6 +33,7 @@ if (Test-Path $src) {
     Invoke-WebRequest 'https://raw.githubusercontent.com/vendemiaraul-cyber/python-disconnected/studio/plugin/ClaudeSync.lua' -OutFile (Join-Path $pluginDir 'ClaudeSync.lua') -UseBasicParsing
 }
 Write-Host 'Installed. Restart Roblox Studio if it is open; look for the "Claude" toolbar in the Plugins tab.'
+Write-Host 'When Studio asks if Claude Sync may connect to github.com and ntfy.sh, click Allow.'
 
 # 3. Chrome Remote Desktop host (needs admin -> one UAC prompt)
 Step 'Chrome Remote Desktop host'
@@ -49,7 +50,21 @@ if ($crd) {
     if ($p.ExitCode -ne 0) { throw "Chrome Remote Desktop install failed (code $($p.ExitCode))." }
 }
 
-# 4. Keep the PC reachable: never sleep while plugged in
+# 4. Less lag over remote desktop: lighter Windows visuals (this user only; undo in Settings > Accessibility > Visual effects)
+Step 'Speed tweaks for smoother remote control'
+try {
+    $fx = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects'
+    if (-not (Test-Path $fx)) { New-Item -Path $fx | Out-Null }
+    Set-ItemProperty $fx -Name VisualFXSetting -Value 2 -Type DWord   # "Adjust for best performance"
+    $pers = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+    if (-not (Test-Path $pers)) { New-Item -Path $pers | Out-Null }
+    Set-ItemProperty $pers -Name EnableTransparency -Value 0 -Type DWord
+    Set-ItemProperty 'HKCU:\Control Panel\Desktop\WindowMetrics' -Name MinAnimate -Value '0'
+    powercfg /setactive SCHEME_MIN 2>$null   # High performance plan, if this PC has one
+    Write-Host 'Done: animations and transparency off. Sign out and back in for everything to apply.'
+} catch { Write-Host 'Some speed tweaks could not be applied - that is fine, everything still works.' -ForegroundColor Yellow }
+
+# 5. Keep the PC reachable: never sleep while plugged in
 Step 'Power settings (no sleep while plugged in)'
 try {
     powercfg /change standby-timeout-ac 0
@@ -57,7 +72,7 @@ try {
     Write-Host 'Done.'
 } catch { Write-Host 'Could not change power settings - set Sleep to "Never" manually.' -ForegroundColor Yellow }
 
-# 5. Finish: one-time sign-in that links this PC to your Google account
+# 6. Finish: one-time sign-in that links this PC to your Google account
 Step 'Last step - in the browser page that just opened:'
 Write-Host '  1. Sign in with a Google account (use the same one on your iPhone).'
 Write-Host '  2. Under "Set up remote access", click "Turn on", name the PC, pick a 6+ digit PIN.'
