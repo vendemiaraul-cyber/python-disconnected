@@ -26,6 +26,19 @@ through TikTok's official Embed Player, ranked by the same algorithm (presets, w
 buttons stay visible there, as its embed rules require, so the 30-comment view and export live in the desktop app.
 Add videos by link in ⚙ › Videos & message; the built-in list is `docs/app/videos.json`.
 
+## Use it in any web page (MiniTok.js)
+
+One script tag, like Leaflet. Real TikTok videos through TikTok's official player, MiniTok's algorithm on top:
+
+```html
+<div id="feed" style="width:400px;height:720px"></div>
+<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.js"></script>
+<script>MiniTok.mount("#feed", { algorithm: { preset: "for_you" } });</script>
+```
+
+Full API in [`js/README.md`](js/README.md); AI app builders can read [`js/llms.txt`](js/llms.txt).
+`minitok serve` adds an HTTP API (`/comments`, `/rank`) for what browsers can't fetch from TikTok.
+
 ## Install & run
 
 ```bash

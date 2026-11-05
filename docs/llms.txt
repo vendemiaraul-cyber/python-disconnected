@@ -1,0 +1,50 @@
+# MiniTok.js
+
+> A dependency-free JavaScript library that renders a TikTok-style vertical "For You" feed of real TikTok
+> videos (through TikTok's official Embed Player) and ranks them with a configurable recommendation
+> algorithm. Load it from a CDN with one script tag, then call MiniTok.mount(element, options).
+
+## Load
+
+- Script tag (global `MiniTok`): https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.js
+- ES module (default export + named exports): https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.mjs
+
+## Minimal app
+
+```html
+<div id="feed" style="width:100%;max-width:420px;height:100vh;margin:auto"></div>
+<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.js"></script>
+<script>
+  const feed = MiniTok.mount("#feed", {
+    videos: ["https://www.tiktok.com/@hankgreen1/video/7047596209028074758"], // optional; 5 starter videos by default
+    algorithm: { preset: "for_you" },
+    onChange: (video, info) => console.log(video.author, info.score),
+  });
+</script>
+```
+
+## API
+
+- MiniTok.mount(elementOrSelector, options) -> controller. The container needs a height. Renders inside a Shadow DOM.
+  - options.videos: array of TikTok video links, numeric ids, or {id, author, description}
+  - options.algorithm: {preset, weights, formula, exploration (0-1), diversity (0-1), interests {token: -3..3}, blocked [tokens], preferredDuration (s), learn (bool)}
+  - options.message: {show: bool, text: string}, a note shown on every video
+  - options.comments: async (video) => [{id, author, text, likes, created, reply_count}]; enables a comments sheet with JSON/CSV/TXT export (max 30)
+  - options.settings (bool), options.storage (localStorage namespace or false), options.oembed (bool)
+  - callbacks: onChange(video, info), onWatch({video, watched, loops}), onError({video, code}), onSettings(config)
+  - controller: next(), previous(), play(), pause(), mute(), unmute(), addVideo(link) -> bool, setAlgorithm(partialConfig), setMessage({show, text}), openSettings(tab), openComments(), destroy(); getters current, videos, history, algorithm
+- MiniTok.rank(videos, partialConfig, recentAuthors?) -> [{video, score, features, explored}] sorted best first
+- MiniTok.makeConfig(partialConfig) -> full config. Presets: for_you, popular, fresh, niche, discovery, random, custom, formula, learned
+- MiniTok.features: the 9 signals (interest, popularity, like_rate, comment_rate, share_rate, freshness, duration_fit, novelty, random), each 0..1
+- new MiniTok.Formula(source).evaluate(features, video): sandboxed formula language, e.g. `3*interest + (2 if has("#cats") else 0)`; operators + - * / ** %, comparisons, and/or/not, `a if cond else b`; functions log, log10, sqrt, exp, tanh, abs, min, max, clamp, has(token), contains(text); throws MiniTok.FormulaError
+- MiniTok.learn(history, seeds, stats) -> {weights, interests, preferred, exploration, report[]}
+- MiniTok.parseExport(fileName, text) -> {data, stats, seeds}: reads TikTok's "Download your data" JSON/TXT
+- MiniTok.exportComments(video, comments, "json"|"csv"|"txt") -> string
+- MiniTok.commentsFrom(baseUrl): comments source for a running `minitok serve` (Python), GET {baseUrl}/comments?id=...
+- MiniTok.toVideo(linkOrId) -> video object or null; MiniTok.starterVideos; MiniTok.version
+
+## Rules to respect
+
+- Do not hide, cover or restyle TikTok's own player UI (creator name, buttons); MiniTok places its controls outside it.
+- Browsers can't fetch TikTok comments directly; use options.comments with a server.
+- Videos start muted (browser autoplay rules); the first tap on the video turns sound on.

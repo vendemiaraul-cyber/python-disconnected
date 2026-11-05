@@ -137,6 +137,7 @@
       <a href="#screens">Screens</a>
       <a href="#algorithm">Algorithm</a>
       <a href="#data">Your data</a>
+      <a href="#embed">Embed</a>
       <a href="#install">Install</a>
       <a href="app/">Try it</a>
       <a href="https://github.com/vendemiaraul-cyber/python-disconnected/tree/claude/minitok-app">GitHub</a>
@@ -264,6 +265,38 @@
   </div>
 </section>
 
+<section id="embed">
+  <div class="wrap split">
+    <div>
+      <h2>Put it in your app</h2>
+      <p class="sub">MiniTok is also a JavaScript library. One script tag drops the whole feed into any page or
+        AI-built app, the way Leaflet does for maps. There's a description for AI tools at <a href="llms.txt">llms.txt</a>.</p>
+<pre><span class="c">&lt;!-- a box with a height --&gt;</span>
+&lt;div id=<span class="s">"feed"</span> style=<span class="s">"height:720px"</span>&gt;&lt;/div&gt;
+&lt;script src=<span class="s">"https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/
+  python-disconnected@1/js/dist/minitok.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  MiniTok.<span class="k">mount</span>(<span class="s">"#feed"</span>, { algorithm: { preset: <span class="s">"for_you"</span> } });
+&lt;/script&gt;</pre>
+    </div>
+    <div>
+      <table>
+        <thead><tr><th>Call</th><th>Does</th></tr></thead>
+        <tbody>
+          <tr><td><code>MiniTok.mount(el, options)</code></td><td>The full feed with ⚙ settings</td></tr>
+          <tr><td><code>MiniTok.rank(videos, config)</code></td><td>Rank videos with any algorithm</td></tr>
+          <tr><td><code>new MiniTok.Formula(src)</code></td><td>Safe custom ranking formulas</td></tr>
+          <tr><td><code>MiniTok.learn(history)</code></td><td>Fit weights and interests</td></tr>
+          <tr><td><code>MiniTok.parseExport(name, text)</code></td><td>Read a TikTok data file</td></tr>
+          <tr><td><code>MiniTok.exportComments(...)</code></td><td>Comments as JSON, CSV or text</td></tr>
+          <tr><td><code>minitok serve</code></td><td>HTTP API for 30 comments per video</td></tr>
+        </tbody>
+      </table>
+      <p style="color:var(--muted);font-size:14px;margin-top:14px">Full reference: <a href="https://github.com/vendemiaraul-cyber/python-disconnected/blob/claude/minitok-app/js/README.md">js/README.md</a>.</p>
+    </div>
+  </div>
+</section>
+
 <section id="install">
   <div class="wrap split">
     <div>
@@ -305,7 +338,7 @@ minitok --source @nasa --source <span class="s">"#cooking"</span></pre>
     <p class="sub">An early version. Here's what has been checked and what hasn't.</p>
     <div class="status">
       <div class="card ok"><h3>Tested</h3><ul>
-        <li>49 automated tests pass</li>
+        <li>63 automated tests pass (54 Python, 9 JavaScript)</li>
         <li>Full app run on the offline demo: feed, comments, export, settings</li>
         <li>Comments capped at 30 and deleted when you swipe</li>
         <li>Scrapy spider against real TikTok: stops at exactly 30 comments</li>

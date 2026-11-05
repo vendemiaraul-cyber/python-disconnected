@@ -1,0 +1,17 @@
+{
+  "name": "minitok",
+  "version": "1.0.0",
+  "description": "A TikTok-style feed of real TikTok videos (official player) ranked by an algorithm you control. Drop it into any page from a CDN.",
+  "license": "MIT",
+  "homepage": "https://github.com/vendemiaraul-cyber/python-disconnected/tree/claude/minitok-app/js",
+  "repository": { "type": "git", "url": "https://github.com/vendemiaraul-cyber/python-disconnected.git", "directory": "js" },
+  "main": "dist/minitok.js",
+  "module": "dist/minitok.mjs",
+  "browser": "dist/minitok.js",
+  "unpkg": "dist/minitok.js",
+  "jsdelivr": "dist/minitok.js",
+  "exports": { ".": { "import": "./dist/minitok.mjs", "require": "./dist/minitok.js" } },
+  "files": ["dist", "README.md", "llms.txt"],
+  "keywords": ["tiktok", "feed", "recommendation", "algorithm", "for-you", "widget", "embed"],
+  "scripts": { "build": "node build.mjs", "test": "node build.mjs && node --test test/*.test.mjs" }
+}

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiniTok example</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; }
+  #feed { width: min(420px, 100vw); height: 100dvh; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div id="feed"></div>
+<!-- from a CDN: https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@claude/minitok-app/js/dist/minitok.js -->
+<script src="../dist/minitok.js"></script>
+<script>
+  const feed = MiniTok.mount("#feed", {
+    algorithm: { preset: "for_you" },
+    message: { show: true },
+    onChange: (video, info) => console.log("now playing", video.author, info.score),
+  });
+</script>
+</body>
+</html>

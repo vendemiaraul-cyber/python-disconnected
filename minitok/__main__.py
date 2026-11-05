@@ -5,6 +5,7 @@
     minitok --folder ./videos    use a folder of local videos and open
     minitok demo [FOLDER]        create offline demo videos and open them
     minitok learn EXPORT.zip     print what your TikTok export says about your taste
+    minitok serve                start the HTTP API (comments, ranking) for web pages and the JS library
 """
 
 from __future__ import annotations
@@ -24,6 +25,9 @@ def main(argv: list[str] | None = None) -> int:
     learn = sub.add_parser("learn", help="analyse a TikTok data export without opening the app")
     learn.add_argument("export")
     learn.add_argument("--lookup", type=int, default=0, help="look up N videos online to learn weights")
+    serve = sub.add_parser("serve", help="HTTP API for web pages: /comments, /rank (CORS open)")
+    serve.add_argument("--host", default="127.0.0.1", help="use 0.0.0.0 to reach it from your phone on the same Wi-Fi")
+    serve.add_argument("--port", type=int, default=8787)
     parser.add_argument("--source", action="append", default=[], help="@creator, #hashtag or URL (repeatable)")
     parser.add_argument("--folder", help="folder of local video files")
     parser.add_argument("--reset", action="store_true", help="forget all settings and learned interests")
@@ -33,6 +37,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "learn":
         return _learn(args.export, args.lookup, config)
+    if args.cmd == "serve":
+        from .server import serve as run_server
+
+        run_server(args.host, args.port)
+        return 0
     if args.cmd == "demo":
         from .demo import make_demo
 
