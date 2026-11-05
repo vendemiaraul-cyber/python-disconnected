@@ -21,8 +21,10 @@ including fitting it to **your own data**.
 ```
 
 Project page: https://vendemiaraul-cyber.github.io/python-disconnected/ (published from the `gh-pages` branch;
-source in `docs/`). **Try it without installing:** the page's browser preview (`docs/app/`) runs the same feed,
-comments, export and algorithm on the demo clips. Rebuild its clips with `python scripts/build_web_preview.py`.
+source in `docs/`). **Try it without installing:** the page's browser preview (`docs/app/`) plays real TikTok videos
+through TikTok's official Embed Player, ranked by the same algorithm (presets, weights, formula, learning). TikTok's own
+buttons stay visible there, as its embed rules require, so the 30-comment view and export live in the desktop app.
+Add videos by link in ⚙ › Videos & message; the built-in list is `docs/app/videos.json`.
 
 ## Install & run
 

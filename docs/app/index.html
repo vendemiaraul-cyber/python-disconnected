@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>MiniTok Preview</title>
-<meta name="description" content="Try MiniTok in your browser: a TikTok-style feed with an algorithm you control.">
+<meta name="description" content="Try MiniTok in your browser: real TikTok videos, ranked by an algorithm you control.">
 <style>
   :root {
     --red: #fe2c55; --cyan: #25f4ee; --ink: #161823; --grey: #8a8b91;
-    --panel: #121212; --panel-2: #1c1c1c; --line: #2c2c2c;
+    --panel: #121212; --panel-2: #1c1c1c; --line: #2c2c2c; --bar: 48px;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; height: 100%; background: #000; color: #fff; overflow: hidden;
@@ -28,82 +28,40 @@
   .back { display: none; position: fixed; top: 16px; left: 18px; color: #bbb; font-size: 14px; text-decoration: none; }
   .back:hover { color: #fff; }
 
-  /* feed */
-  .feed { position: absolute; inset: 0; overflow-y: scroll; scroll-snap-type: y mandatory;
-          scrollbar-width: none; overscroll-behavior: contain; }
-  .feed::-webkit-scrollbar { display: none; }
-  .slide { position: relative; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; background: #000; }
-  .slide video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .shade { position: absolute; inset: auto 0 0 0; height: 40%; pointer-events: none;
-           background: linear-gradient(transparent, rgba(0,0,0,.45)); }
-  .caption { position: absolute; left: 12px; right: 84px; bottom: 18px; text-shadow: 0 1px 2px rgba(0,0,0,.6); pointer-events: none; }
-  .caption .author { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
-  .caption .desc { font-size: 14px; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .caption .desc b { font-weight: 700; }
-  .caption .music { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .actions { position: absolute; right: 6px; bottom: 26%; display: flex; flex-direction: column; gap: 18px; align-items: center; }
-  .act { width: 64px; display: flex; flex-direction: column; align-items: center; gap: 3px;
-         filter: drop-shadow(0 1px 2px rgba(0,0,0,.45)); }
-  .act svg { width: 40px; height: 40px; display: block; }
-  .act span { font-size: 13px; font-weight: 600; }
-  .act:active { transform: scale(.92); }
-  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: rgba(255,255,255,.25); }
-  .progress i { display: block; height: 100%; width: 0; background: #fff; }
-  .paused { position: absolute; inset: 0; display: none; place-items: center; pointer-events: none; }
-  .paused svg { width: 72px; height: 72px; opacity: .8; }
-  .slide.is-paused .paused { display: grid; }
-
-  /* header */
-  .top { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: center;
-         align-items: center; gap: 18px; padding: calc(14px + env(safe-area-inset-top)) 12px 10px;
-         text-shadow: 0 1px 2px rgba(0,0,0,.5); pointer-events: none; }
-  .top .tab { font-weight: 600; font-size: 16px; color: rgba(255,255,255,.65); }
+  /* MiniTok's header bar sits above TikTok's player, never on top of it */
+  .top { position: absolute; top: 0; left: 0; right: 0; z-index: 5; height: calc(var(--bar) + env(safe-area-inset-top));
+         padding-top: env(safe-area-inset-top); display: flex; justify-content: center; align-items: center; gap: 18px; background: #000; }
+  .top .tab { font-weight: 600; font-size: 16px; color: rgba(255,255,255,.6); }
   .top .tab.on { color: #fff; font-weight: 700; position: relative; }
   .top .tab.on::after { content: ""; position: absolute; left: 25%; right: 25%; bottom: -6px; height: 2.5px; background: #fff; border-radius: 2px; }
-  .gear { position: absolute; right: 12px; top: calc(8px + env(safe-area-inset-top)); width: 38px; height: 38px;
-          display: grid; place-items: center; pointer-events: auto; filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+  .gear { position: absolute; right: 8px; bottom: 5px; width: 38px; height: 38px; display: grid; place-items: center; }
   .gear svg { width: 24px; height: 24px; }
-  .sound { position: absolute; left: 10px; top: calc(56px + env(safe-area-inset-top)); z-index: 6; display: flex; gap: 6px;
-           align-items: center; background: rgba(0,0,0,.45); border-radius: 999px; padding: 5px 11px 5px 8px;
-           font-size: 13px; font-weight: 600; }
-  .sound svg { width: 18px; height: 18px; }
-  .sound.on .label { display: none; }
-  .sound.on { padding: 5px 8px; background: rgba(0,0,0,.25); }
+  .sound { position: absolute; left: 8px; bottom: 5px; width: 38px; height: 38px; display: grid; place-items: center;
+           border-radius: 50%; background: #1f1f1f; }
+  .sound svg { width: 20px; height: 20px; }
+  .sound.on { background: transparent; }
+
+  /* feed of official TikTok players */
+  .feed { position: absolute; top: calc(var(--bar) + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0;
+          overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; overscroll-behavior: contain; }
+  .feed::-webkit-scrollbar { display: none; }
+  .slide { position: relative; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; background: #000; }
+  .slide iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+  .slide .wait { position: absolute; inset: 0; display: grid; place-items: center; color: #666; font-size: 13px; }
+  /* a transparent strip for swipe/tap; TikTok's header, buttons and caption stay uncovered and clickable */
+  .touch { position: absolute; top: 64px; left: 0; right: 76px; bottom: 140px; z-index: 2; }
+  .plea { position: absolute; z-index: 3; left: 10px; top: 66px; max-width: calc(100% - 100px); pointer-events: none;
+          background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.2); border-radius: 10px;
+          padding: 6px 10px; font-size: 12px; line-height: 1.35; }
+  .plea b { color: var(--cyan); }
+  .paused { position: absolute; inset: 0; z-index: 2; display: none; place-items: center; pointer-events: none; }
+  .paused svg { width: 72px; height: 72px; opacity: .8; filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
+  .slide.is-paused .paused { display: grid; }
 
   .toast { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); z-index: 30;
-           background: rgba(0,0,0,.75); padding: 12px 18px; border-radius: 10px; font-size: 14px; max-width: 80%;
+           background: rgba(0,0,0,.8); padding: 12px 18px; border-radius: 10px; font-size: 14px; max-width: 80%;
            text-align: center; opacity: 0; transition: opacity .2s; pointer-events: none; }
   .toast.show { opacity: 1; }
-
-  /* bottom sheets */
-  .scrim { position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .2s; }
-  .scrim.show { opacity: 1; pointer-events: auto; }
-  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; background: #fff; color: var(--ink);
-           border-radius: 14px 14px 0 0; transform: translateY(105%); transition: transform .24s cubic-bezier(.2,.8,.2,1);
-           display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
-  .sheet.show { transform: none; }
-  #comments { height: 70%; }
-  .sheet-head { display: flex; align-items: center; padding: 12px 12px 4px; gap: 8px; }
-  .sheet-head h3 { flex: 1; text-align: center; margin: 0; font-size: 14px; }
-  .sheet-head .x { width: 32px; height: 32px; font-size: 18px; color: var(--ink); }
-  .btn-export { background: var(--red); color: #fff; font-weight: 600; font-size: 13px; border-radius: 4px; padding: 5px 12px; }
-  .note { text-align: center; font-size: 11px; color: var(--grey); padding: 0 16px 6px; }
-  .clist { flex: 1; overflow-y: auto; padding: 4px 0 12px; overscroll-behavior: contain; }
-  .c { display: flex; gap: 10px; padding: 9px 14px; }
-  .c .av { width: 32px; height: 32px; border-radius: 50%; flex: none; display: grid; place-items: center;
-           font-weight: 700; font-size: 13px; color: #fff; }
-  .c .body { flex: 1; min-width: 0; }
-  .c .who { color: var(--grey); font-size: 12px; font-weight: 600; }
-  .c .txt { font-size: 14px; margin: 2px 0; overflow-wrap: anywhere; user-select: text; }
-  .c .meta { color: var(--grey); font-size: 11px; }
-  .c .lk { color: var(--grey); font-size: 11px; text-align: center; flex: none; width: 34px; }
-  .c .lk svg { width: 16px; height: 16px; display: block; margin: 0 auto 2px; }
-  .empty { text-align: center; color: var(--grey); padding: 40px 20px; font-size: 13px; }
-
-  #export .opts { padding: 6px 0 14px; }
-  #export .opt { display: block; width: 100%; text-align: left; padding: 14px 20px; font-size: 15px; color: var(--ink); border-top: 1px solid #f0f0f0; }
-  #export .opt:active { background: #f4f4f5; }
-  #export .opt small { color: var(--grey); margin-left: 6px; }
 
   /* settings */
   #settings { position: absolute; inset: 0; z-index: 25; background: var(--panel); color: #eee; transform: translateX(100%);
@@ -126,6 +84,7 @@
     width: 100%; background: var(--panel-2); color: #f2f2f2; border: 1px solid #333; border-radius: 8px;
     padding: 9px 10px; font: inherit; font-size: 14px; }
   textarea { resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+  textarea.plain { font-family: inherit; font-size: 14px; }
   .row { display: grid; grid-template-columns: 104px 1fr 44px; gap: 8px; align-items: center; margin: 6px 0; font-size: 13px; }
   .row output { text-align: right; color: #ccc; font-variant-numeric: tabular-nums; }
   input[type=range] { width: 100%; accent-color: var(--cyan); }
@@ -141,14 +100,18 @@
   .tokens { display: grid; gap: 6px; }
   .tok { display: grid; grid-template-columns: 1fr 70px 30px; gap: 6px; }
   .tok input { padding: 7px 8px; }
-  .tok button { color: #999; font-size: 18px; }
+  .tok button, .vrow button { color: #999; font-size: 18px; }
+  .vrow { display: grid; grid-template-columns: 1fr 30px; gap: 6px; align-items: center; padding: 6px 0; border-bottom: 1px solid #222; font-size: 13px; }
+  .vrow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vrow small { color: #888; }
+  .addrow { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
   .rank { font-size: 12.5px; color: #ccc; }
   .rank div { padding: 5px 0; border-bottom: 1px solid #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .rank b { color: var(--cyan); font-variant-numeric: tabular-nums; display: inline-block; width: 52px; }
   table.why { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   table.why td { padding: 4px 2px; border-bottom: 1px solid #222; font-variant-numeric: tabular-nums; }
   table.why td:not(:first-child) { text-align: right; }
-  .demo-flag { background: rgba(37,244,238,.1); border: 1px solid rgba(37,244,238,.3); color: #bff; border-radius: 8px; padding: 8px 10px; font-size: 12px; margin-bottom: 12px; }
+  .flag { background: rgba(37,244,238,.1); border: 1px solid rgba(37,244,238,.3); color: #bff; border-radius: 8px; padding: 8px 10px; font-size: 12px; margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -158,34 +121,13 @@
     <div class="feed" id="feed"></div>
 
     <div class="top">
+      <button class="sound" id="sound" aria-label="Toggle sound" title="Sound (M)"><svg viewBox="0 0 24 24" fill="#fff" id="soundIcon"></svg></button>
       <span class="tab">Following</span><span class="tab on">For You</span>
       <button class="gear" id="gear" aria-label="Algorithm and settings">
         <svg viewBox="0 0 24 24" fill="#fff"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.8 1.7 1l.4 2.6h4l.4-2.6c.6-.2 1.2-.6 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
       </button>
     </div>
-    <button class="sound" id="sound" aria-label="Toggle sound">
-      <svg viewBox="0 0 24 24" fill="#fff" id="soundIcon"></svg><span class="label">Tap for sound</span>
-    </button>
     <div class="toast" id="toast"></div>
-
-    <div class="scrim" id="scrim"></div>
-    <section class="sheet" id="comments" aria-label="Comments">
-      <div class="sheet-head">
-        <button class="btn-export" id="cExport">Export</button>
-        <h3 id="cTitle">Comments</h3>
-        <button class="x" id="cClose" aria-label="Close">✕</button>
-      </div>
-      <div class="note">Demo comments · read-only · up to 30 · deleted when you swipe to the next video</div>
-      <div class="clist" id="clist"></div>
-    </section>
-    <section class="sheet" id="export" aria-label="Export comments">
-      <div class="sheet-head"><span style="width:32px"></span><h3>Export comments</h3><button class="x" data-close aria-label="Close">✕</button></div>
-      <div class="opts">
-        <button class="opt" data-fmt="json">JSON<small>for code</small></button>
-        <button class="opt" data-fmt="csv">CSV<small>for Excel / Sheets</small></button>
-        <button class="opt" data-fmt="txt">Plain text</button>
-      </div>
-    </section>
 
     <section id="settings" aria-label="Settings">
       <div class="s-head">
@@ -193,13 +135,14 @@
       </div>
       <div class="s-tabs" id="sTabs">
         <button data-tab="algo" class="on">Algorithm</button>
+        <button data-tab="videos">Videos &amp; message</button>
         <button data-tab="interests">Interests</button>
         <button data-tab="find">Find my algorithm</button>
         <button data-tab="why">Why this video?</button>
       </div>
       <div class="s-body">
         <div class="pane on" data-pane="algo">
-          <div class="demo-flag">Browser preview: same algorithm as the desktop app, running on 12 demo clips.</div>
+          <div class="flag">Real TikTok videos through TikTok's official player. MiniTok's algorithm decides the order.</div>
           <h4>Type of algorithm</h4>
           <select id="preset"></select>
           <p class="hint" id="presetDesc"></p>
@@ -215,7 +158,7 @@
             <div class="msg" id="formulaMsg"></div>
             <p class="hint">Variables: interest, popularity, like_rate, comment_rate, share_rate, freshness, duration_fit,
               novelty, random, views, likes, comments, shares, duration, age_hours. Functions: log, log10, sqrt, exp, tanh,
-              abs, min, max, clamp, has("#tag"), contains("word"). Example: <code>3*interest + (2 if has("#cats") else 0)</code></p>
+              abs, min, max, clamp, has("#tag"), contains("word"). Example: <code>3*interest + (2 if has("@hankgreen1") else 0)</code></p>
           </div>
           <h4>Behaviour</h4>
           <div class="row"><span>Exploration</span><input type="range" id="exploration" min="0" max="100"><output id="explorationOut"></output></div>
@@ -223,8 +166,23 @@
           <div class="row"><span>Preferred length</span><input type="number" id="prefLen" min="3" max="900"><output>s</output></div>
           <label class="check"><input type="checkbox" id="learn"> Learn my interests while I watch (finish/loop = more, skip = less)</label>
           <h4>Preview</h4>
-          <button class="sbtn" id="preview">Rank the clips with these settings</button>
+          <button class="sbtn" id="preview">Rank the videos with these settings</button>
           <div class="rank" id="rank"></div>
+        </div>
+
+        <div class="pane" data-pane="videos">
+          <h4>Message to TikTok</h4>
+          <label class="check"><input type="checkbox" id="pleaOn"> Show this message on every video</label>
+          <textarea id="pleaText" class="plain" rows="3" maxlength="200"></textarea>
+          <p class="hint">Shown by MiniTok on top of the player, away from TikTok's buttons and creator name. It doesn't
+            change the video.</p>
+          <h4>Add a TikTok video</h4>
+          <div class="addrow"><input type="text" id="addUrl" placeholder="https://www.tiktok.com/@user/video/123…" inputmode="url"><button class="sbtn primary" id="addBtn">Add</button></div>
+          <div class="msg" id="addMsg"></div>
+          <p class="hint">Paste the full link from TikTok's Share › Copy link. TikTok has no official feed for apps, so the
+            algorithm ranks the videos listed here. Videos whose creators turned off embedding are skipped automatically.</p>
+          <h4>Your videos</h4>
+          <div id="vlist"></div>
         </div>
 
         <div class="pane" data-pane="interests">
@@ -246,8 +204,7 @@
           <p class="msg" id="histInfo"></p>
           <h4>2 · Your TikTok data export (optional)</h4>
           <p class="hint">In TikTok: Settings › Account › Download your data (JSON). Unzip it, then pick
-            <code>user_data_tiktok.json</code> (or a .txt file). In the browser it reads searches, follows, favourite
-            hashtags and watch timing; the desktop app can also look up the videos online.</p>
+            <code>user_data_tiktok.json</code> (or a .txt file). It reads searches, follows, favourite hashtags and watch timing.</p>
           <input type="file" id="exportFile" accept=".json,.txt" style="font-size:13px;color:#ccc">
           <div class="msg" id="exportInfo"></div>
           <button class="sbtn primary" id="fit">Find my algorithm</button>
@@ -634,24 +591,56 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem("minitok." + k); return v ? JSON.parse(v) : d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem("minitok." + k, JSON.stringify(v)); } catch {} },
 };
+const DEFAULT_PLEA = "Dear TikTok: please promise a better embed. I want my own UI. 💬 sent from MiniTok";
 let cfg = Object.assign(defaultConfig(), store.get("config", {}));
-let history = store.get("history", []);     // impressions: {video, watched, loops, openedComments}
+let ui = Object.assign({ pleaOn: true, pleaText: DEFAULT_PLEA }, store.get("ui", {}));
+let history = store.get("history", []);        // impressions: {video, watched, loops, openedComments}
+let extra = store.get("videos", []);           // videos you added: {id, author}
+let broken = new Set(store.get("broken", []));  // ids TikTok refused to embed
 let VIDEOS = [];
-const shown = [];                            // scored items in feed order
-let current = -1, loaded = null;             // index on screen; comments currently held in memory
-let stats = null, muted = true;
+const shown = [];                               // scored items in feed order
+let current = -1, stats = null, muted = true;
 const recorded = new Set();
 
 const fmtCount = (n) => n < 1e4 ? String(n) : n < 1e6 ? n.toLocaleString("de-DE") : (n / 1e6).toFixed(1).replace(".0", "").replace(".", ",") + "M";
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-function toast(t, ms = 1600) { const el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), ms); }
+function toast(t, ms = 1800) { const el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), ms); }
+
+function makeVideo(o) {
+  return { id: String(o.id), url: `https://www.tiktok.com/@${o.author || "_"}/video/${o.id}`, author: o.author || "",
+           description: o.description || "", hashtags: o.hashtags || [], music: "", duration: o.duration || 0,
+           views: 0, likes: 0, comment_count: o.comment_count || 0, shares: 0, created: 0 };
+}
+function rebuildVideos(base) {
+  const seen = new Set(), list = [];
+  for (const o of [...base, ...extra]) {
+    const id = String(o.id);
+    if (seen.has(id) || broken.has(id)) continue;
+    seen.add(id);
+    const known = VIDEOS.find((v) => v.id === id);
+    list.push(known || makeVideo(o));
+  }
+  VIDEOS = list;
+}
+// TikTok's official oEmbed endpoint allows browser calls; it fills in caption and creator when it has them
+async function enrich(v) {
+  try {
+    const r = await fetch("https://www.tiktok.com/oembed?url=" + encodeURIComponent(v.url));
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.author_unique_id) v.author = d.author_unique_id;
+    if (d.title) { v.description = d.title; v.hashtags = (d.title.match(/#(\w+)/gu) || []).map((h) => h.slice(1).toLowerCase()); }
+    delete v._tokens;
+  } catch {}
+}
 
 function recentAuthors() { return shown.slice(0, current + 1).map((s) => s.video.author).slice(-30); }
 function pickNext() {
+  if (!VIDEOS.length) return null;
   const seen = new Set(shown.map((s) => s.video.id));
   let cands = VIDEOS.filter((v) => !seen.has(v.id));
-  if (!cands.length) { // demo has 12 clips: once all are seen, start over except the last few
-    const lastFew = new Set(shown.slice(-4).map((s) => s.video.id));
+  if (!cands.length) { // only a few videos: once all are seen, start over without the last couple
+    const keepOut = Math.min(2, VIDEOS.length - 1), lastFew = new Set(shown.slice(-keepOut || 1).map((s) => s.video.id));
     cands = VIDEOS.filter((v) => !lastFew.has(v.id));
   }
   let ranked;
@@ -662,143 +651,117 @@ function pickNext() {
   return ranked[0];
 }
 
-/* ============================================================ feed rendering */
-const ICON_COMMENT = `<svg viewBox="0 0 48 48"><path fill="#fff" d="M24 4C12.4 4 3 11.9 3 21.7c0 5.6 3.1 10.6 7.9 13.9L9 44l9-4.6c1.9.4 3.9.6 6 .6 11.6 0 21-7.9 21-17.7S35.6 4 24 4z"/><circle cx="14.5" cy="22" r="3" fill="#161823"/><circle cx="24" cy="22" r="3" fill="#161823"/><circle cx="33.5" cy="22" r="3" fill="#161823"/></svg>`;
-const ICON_SHARE = `<svg viewBox="0 0 48 48"><path fill="#fff" d="M26 6v9.2C13.4 16.6 5 25.6 4 40c4.6-7.4 11.6-11.4 22-11.6V38l18-16L26 6z"/></svg>`;
+/* ============================================================ official TikTok player */
+const PLAYER_PARAMS = "controls=0&progress_bar=0&play_button=0&volume_control=0&fullscreen_button=0&timestamp=0" +
+  "&loop=1&autoplay=1&music_info=1&description=1&rel=0&closed_caption=0";  // the player only takes commands once it may autoplay
 const ICON_PLAY = `<svg viewBox="0 0 24 24"><path fill="#fff" d="M8 5v14l11-7z"/></svg>`;
-const ICON_HEART_SM = `<svg viewBox="0 0 24 24"><path fill="none" stroke="#8a8b91" stroke-width="2" d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
 const SPK_ON = `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/>`;
 const SPK_OFF = `<path d="M16.5 12A4.5 4.5 0 0 0 14 8v2.2l2.4 2.4.1-.6zM19 12c0 .9-.2 1.8-.5 2.6l1.5 1.5A8.8 8.8 0 0 0 21 12a9 9 0 0 0-7-8.8v2.1a7 7 0 0 1 5 6.7zM4.3 3 3 4.3 7.7 9H3v6h4l5 5v-6.7l4.3 4.2c-.7.5-1.4.9-2.3 1.2v2.1a9 9 0 0 0 3.7-1.8l2 2 1.3-1.3L4.3 3zM12 4 9.9 6.1 12 8.2V4z"/>`;
+const send = (frame, type, value) => frame && frame.contentWindow && frame.contentWindow.postMessage({ type, value, "x-tiktok-player": true }, "*");
 
-function captionHTML(v) {
-  const desc = esc(v.description).replace(/#(\w+)/gu, "<b>#$1</b>");
-  return `<div class="author">@${esc(v.author)}</div><div class="desc">${desc}</div><div class="music">♪&nbsp; ${esc(v.music || "original sound")}</div>`;
-}
 function addSlide(item) {
-  const v = item.video, el = document.createElement("div");
+  const el = document.createElement("div");
   el.className = "slide";
-  el.innerHTML = `<video playsinline muted loop preload="metadata" src="${v.src}"></video><div class="shade"></div>
-    <div class="paused">${ICON_PLAY}</div>
-    <div class="actions">
-      <button class="act" data-a="comments" aria-label="Comments">${ICON_COMMENT}<span>${fmtCount(v.comment_count)}</span></button>
-      <button class="act" data-a="export" aria-label="Export comments">${ICON_SHARE}<span>${fmtCount(v.shares)}</span></button>
-    </div>
-    <div class="caption">${captionHTML(v)}</div><div class="progress"><i></i></div>`;
-  const video = el.querySelector("video"), bar = el.querySelector(".progress i");
-  video.muted = muted;
-  video.addEventListener("timeupdate", () => { if (video.duration) bar.style.width = (video.currentTime / video.duration * 100) + "%"; });
-  let lastT = 0;
-  video.addEventListener("timeupdate", () => { if (stats && video.currentTime + .25 < lastT) stats.loops++; lastT = video.currentTime; });
-  video.addEventListener("loadedmetadata", () => { if (!v.duration && video.duration) v.duration = video.duration; });
-  el.addEventListener("click", (e) => {
-    const a = e.target.closest(".act");
-    if (a) { e.stopPropagation(); a.dataset.a === "comments" ? openComments() : openExport(); return; }
-    togglePause();
-  });
+  el.innerHTML = `<div class="wait">Loading TikTok…</div><div class="touch"></div><div class="paused">${ICON_PLAY}</div>
+    <div class="plea"${ui.pleaOn ? "" : " hidden"}>${esc(ui.pleaText)}</div>`;
+  el.querySelector(".touch").addEventListener("click", togglePause);
   $("#feed").appendChild(el);
   shown.push(item);
 }
-function ensureAhead() {
-  while (shown.length < current + 3) { const n = pickNext(); if (!n) break; addSlide(n); }
+const slideEl = (i) => $("#feed").children[i];
+function mountPlayer(i) {
+  const el = slideEl(i);
+  if (!el || el.querySelector("iframe")) return;
+  const f = document.createElement("iframe");
+  f.src = `https://www.tiktok.com/player/v1/${shown[i].video.id}?${PLAYER_PARAMS}`;
+  f.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
+  f.title = "TikTok video by @" + shown[i].video.author;
+  f.dataset.index = i;
+  f.addEventListener("load", () => { const w = el.querySelector(".wait"); if (w) w.textContent = ""; });
+  el.prepend(f);
 }
-function slideEl(i) { return $("#feed").children[i]; }
+function unmountPlayer(i) { const f = slideEl(i) && slideEl(i).querySelector("iframe"); if (f) f.remove(); }
+function frameOf(i) { return slideEl(i) && slideEl(i).querySelector("iframe"); }
 
+addEventListener("message", (e) => {
+  const d = e.data;
+  if (!d || !d["x-tiktok-player"]) return;
+  const f = [...document.querySelectorAll(".slide iframe")].find((x) => x.contentWindow === e.source);
+  if (!f) return;
+  const i = +f.dataset.index, isCurrent = i === current, v = shown[i] && shown[i].video;
+  const wantPlay = isCurrent && !slideEl(i).classList.contains("is-paused") && !$("#settings").classList.contains("show");
+  if (!f.dataset.ready) { // first word from this player: it's alive and takes commands now
+    f.dataset.ready = "1";
+    const w = f.parentElement.querySelector(".wait"); if (w) w.remove();
+    send(f, muted ? "mute" : "unMute");
+    send(f, wantPlay ? "play" : "pause");
+  }
+  if (d.type === "onStateChange" && d.value === 1 && !wantPlay) {
+    send(f, "pause"); // a preloaded neighbour started on its own
+  } else if (d.type === "onCurrentTime" && isCurrent && stats) {
+    const t = d.value.currentTime, dur = d.value.duration;
+    if (v && dur && !v.duration) v.duration = dur;
+    if (t + 1 < stats.lastT) stats.loops++;  // the player looped back to the start
+    stats.lastT = t; stats.watched = t;
+  } else if (d.type === "onPlayerError" && v) {
+    const code = d.value && d.value.errorCode;
+    if (code === 1001) { broken.add(v.id); store.set("broken", [...broken]); VIDEOS = VIDEOS.filter((x) => x.id !== v.id); }
+    if (isCurrent) { toast("TikTok can't play this one here - skipping"); setTimeout(() => go(1), 1200); }
+  }
+});
+
+function ensureAhead() { while (shown.length < current + 3) { const n = pickNext(); if (!n) break; addSlide(n); } }
 function leave(i) {
   const item = shown[i]; if (!item) return;
-  const el = slideEl(i), video = el && el.querySelector("video");
-  if (video) { video.pause(); el.classList.remove("is-paused"); }
-  loaded = null; // comments are only kept while the video is on screen
+  send(frameOf(i), "pause");
+  slideEl(i).classList.remove("is-paused");
   if (stats && !recorded.has(i)) {
     recorded.add(i);
-    const imp = { video: strip(item.video), watched: video ? video.currentTime : 0, loops: stats.loops, openedComments: stats.openedComments };
+    const { _tokens, ...video } = item.video;
+    const imp = { video, watched: stats.watched, loops: stats.loops, openedComments: false };
     history.push(imp); history = history.slice(-400); store.set("history", history);
     if (cfg.learn && cfg.preset !== "random" && cfg.preset !== "formula") { updateInterests(cfg.interests, imp); store.set("config", cfg); }
   }
 }
-const strip = (v) => { const { comments, _tokens, ...rest } = v; return rest; };
 function arrive(i) {
-  current = i; stats = { loops: 0, openedComments: false };
-  const el = slideEl(i), video = el.querySelector("video");
-  video.muted = muted; video.currentTime = 0;
-  const p = video.play(); if (p) p.catch(() => {});
-  for (let j = 0; j < shown.length; j++) if (Math.abs(j - i) <= 1) slideEl(j).querySelector("video").preload = "auto";
-  loaded = shown[i].video.comments.slice(0, 30); // "download" up to 30 comments for the video on screen
+  current = i; stats = { loops: 0, watched: 0, lastT: 0 };
   ensureAhead();
+  // keep only the players next to you alive: less data, and nothing plays off-screen
+  for (let j = 0; j < shown.length; j++) (Math.abs(j - i) <= 1 ? mountPlayer(j) : unmountPlayer(j));
+  const f = frameOf(i);
+  send(f, muted ? "mute" : "unMute"); send(f, "seekTo", 0); send(f, "play");
 }
 let settleTimer = null;
 $("#feed").addEventListener("scroll", () => {
   clearTimeout(settleTimer);
   settleTimer = setTimeout(() => {
     const i = Math.round($("#feed").scrollTop / $("#feed").clientHeight);
-    if (i !== current && shown[i]) { closeSheets(); leave(current); arrive(i); }
+    if (i !== current && shown[i]) { leave(current); arrive(i); }
   }, 90);
 }, { passive: true });
 function go(d) { const i = current + d; if (i < 0 || !shown[i]) return; $("#feed").scrollTo({ top: i * $("#feed").clientHeight, behavior: "smooth" }); }
 function togglePause() {
   const el = slideEl(current); if (!el) return;
-  const v = el.querySelector("video");
-  if (muted) { setMuted(false); if (!v.paused) return; }
-  if (v.paused) { v.play().catch(() => {}); el.classList.remove("is-paused"); } else { v.pause(); el.classList.add("is-paused"); }
+  if (muted) { setMuted(false); toast("Sound on", 900); return; }
+  const paused = el.classList.toggle("is-paused");
+  send(frameOf(current), paused ? "pause" : "play");
 }
 function setMuted(m) {
   muted = m;
-  for (const v of document.querySelectorAll(".slide video")) v.muted = m;
+  for (const f of document.querySelectorAll(".slide iframe")) send(f, m ? "mute" : "unMute");
   $("#soundIcon").innerHTML = m ? SPK_OFF : SPK_ON;
   $("#sound").classList.toggle("on", !m);
 }
-$("#sound").addEventListener("click", (e) => { e.stopPropagation(); setMuted(!muted); });
-
-/* ============================================================ comments + export */
-const COLORS = ["#fe2c55", "#25a4ee", "#7c4dff", "#00b894", "#ff9f43", "#e84393", "#0984e3", "#6c5ce7"];
-function ago(ts) {
-  if (!ts) return ""; const d = Date.now() / 1000 - ts;
-  for (const [s, u] of [[31536000, "y"], [604800, "w"], [86400, "d"], [3600, "h"], [60, "m"]]) if (d >= s) return Math.floor(d / s) + u + " ago";
-  return "just now";
-}
-function openComments() {
-  const v = shown[current] && shown[current].video; if (!v) return;
-  stats.openedComments = true;
-  const cs = loaded || [];
-  $("#cTitle").textContent = `${cs.length}${v.comment_count > cs.length ? " of " + fmtCount(v.comment_count) : ""} comments`;
-  $("#clist").innerHTML = cs.length ? cs.map((c) => `<div class="c">
-      <div class="av" style="background:${COLORS[(c.author.charCodeAt(0) + c.author.length) % COLORS.length]}">${esc(c.author[0] || "?").toUpperCase()}</div>
-      <div class="body"><div class="who">${esc(c.author)}</div><div class="txt">${esc(c.text)}</div><div class="meta">${ago(c.created)}</div></div>
-      <div class="lk">${ICON_HEART_SM}${fmtCount(c.likes)}</div></div>`).join("") : `<div class="empty">No comments on this video.</div>`;
-  $("#clist").scrollTop = 0;
-  show("#comments");
-}
-function openExport() { if (shown[current]) show("#export"); }
-function show(sel) { closeSheets(); $("#scrim").classList.add("show"); $(sel).classList.add("show"); }
-function closeSheets() { $("#scrim").classList.remove("show"); for (const s of document.querySelectorAll(".sheet")) s.classList.remove("show"); }
-$("#scrim").addEventListener("click", closeSheets);
-$("#cClose").addEventListener("click", closeSheets);
-$("#cExport").addEventListener("click", openExport);
-document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", closeSheets));
-document.querySelectorAll("#export .opt").forEach((b) => b.addEventListener("click", () => exportComments(b.dataset.fmt)));
-function exportComments(fmt) {
-  const v = shown[current].video, cs = loaded || [];
-  if (!cs.length) { toast("This video has no comments to export"); return; }
-  const date = (t) => (t ? new Date(t * 1000).toISOString().slice(0, 16).replace("T", " ") : "");
-  let body, type;
-  if (fmt === "json") { body = JSON.stringify({ video: { id: v.id, author: v.author, description: v.description }, comments: cs }, null, 2); type = "application/json"; }
-  else if (fmt === "csv") {
-    const q = (s) => `"${String(s).replace(/"/g, '""')}"`;
-    body = "﻿" + ["author,text,likes,replies,date,comment_id", ...cs.map((c) => [q(c.author), q(c.text), c.likes, c.reply_count, q(date(c.created)), q(c.id)].join(","))].join("\n");
-    type = "text/csv";
-  } else { body = [`Comments on @${v.author}: ${v.description}`, "", ...cs.flatMap((c) => [`@${c.author} (${c.likes} likes${c.created ? ", " + date(c.created) : ""})`, "  " + c.text, ""])].join("\n"); type = "text/plain"; }
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([body], { type: type + ";charset=utf-8" }));
-  a.download = `comments_${v.author}_${v.id}.${fmt}`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  closeSheets(); toast(`Exported ${cs.length} comments`);
+$("#sound").addEventListener("click", () => setMuted(!muted));
+function applyPlea() {
+  for (const p of document.querySelectorAll(".plea")) { p.textContent = ui.pleaText; p.hidden = !ui.pleaOn; }
 }
 
 /* ============================================================ settings */
-let draft = null, fitResult = null;
+let draft = null, draftUi = null, draftExtra = null, fitResult = null;
 function openSettings(tab = "algo") {
-  draft = JSON.parse(JSON.stringify(cfg));
-  const v = slideEl(current) && slideEl(current).querySelector("video"); if (v) v.pause();
+  draft = JSON.parse(JSON.stringify(cfg)); draftUi = { ...ui }; draftExtra = extra.map((x) => ({ ...x }));
+  send(frameOf(current), "pause");
   fillSettings(); selectTab(tab); renderWhy();
   $("#histInfo").textContent = `${history.length} videos watched in this browser so far.`;
   $("#settings").classList.add("show");
@@ -806,23 +769,26 @@ function openSettings(tab = "algo") {
 function closeSettings(save) {
   if (save) {
     readSettings();
-    if (draft.preset === "formula") { try { new Formula(draft.formula).evaluate(features(VIDEOS[0], { interests: {}, preferredDuration: 10, recentAuthors: [] }), VIDEOS[0]); }
+    if (draft.preset === "formula" && VIDEOS[0]) { try { new Formula(draft.formula).evaluate(features(VIDEOS[0], { interests: {}, preferredDuration: 10, recentAuthors: [] }), VIDEOS[0]); }
       catch (e) { selectTab("algo"); $("#formulaMsg").className = "msg err"; $("#formulaMsg").textContent = "❌ " + e.message; return; } }
     cfg = draft; store.set("config", cfg);
-    // re-pick the clips that are queued but not watched yet
-    const feed = $("#feed");
-    while (shown.length > current + 1) { shown.pop(); feed.lastElementChild.remove(); }
-    ensureAhead();
+    ui = draftUi; store.set("ui", ui); applyPlea();
+    const added = draftExtra.filter((x) => !extra.some((y) => y.id === x.id));
+    extra = draftExtra; store.set("videos", extra);
+    rebuildVideos(BASE); added.forEach((x) => { const v = VIDEOS.find((y) => y.id === x.id); if (v) enrich(v); });
+    // re-pick what's queued but not watched yet
+    while (shown.length > current + 1) { shown.pop(); $("#feed").lastElementChild.remove(); }
+    ensureAhead(); mountPlayer(current + 1);
   }
   $("#settings").classList.remove("show");
-  const el = slideEl(current); if (el && !el.classList.contains("is-paused")) el.querySelector("video").play().catch(() => {});
+  const el = slideEl(current); if (el && !el.classList.contains("is-paused")) send(frameOf(current), "play");
 }
 function selectTab(t) {
   document.querySelectorAll("#sTabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
   document.querySelectorAll(".pane").forEach((p) => p.classList.toggle("on", p.dataset.pane === t));
 }
 $("#sTabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) selectTab(b.dataset.tab); });
-$("#gear").addEventListener("click", (e) => { e.stopPropagation(); openSettings(); });
+$("#gear").addEventListener("click", () => openSettings());
 $("#sCancel").addEventListener("click", () => closeSettings(false));
 $("#sSave").addEventListener("click", () => closeSettings(true));
 
@@ -839,7 +805,8 @@ function fillSettings() {
   $("#prefLen").value = Math.round(draft.preferredDuration); $("#learn").checked = draft.learn;
   $("#formulaBox").style.display = draft.preset === "formula" ? "" : "none";
   $("#weightsBox").style.display = draft.preset === "formula" ? "none" : "";
-  renderTokens(); $("#blocked").value = draft.blocked.join("\n"); $("#rank").innerHTML = "";
+  $("#pleaOn").checked = draftUi.pleaOn; $("#pleaText").value = draftUi.pleaText; $("#addMsg").textContent = "";
+  renderVideoList(); renderTokens(); $("#blocked").value = draft.blocked.join("\n"); $("#rank").innerHTML = "";
 }
 function readSettings() {
   draft.preset = sel.value;
@@ -849,6 +816,7 @@ function readSettings() {
   draft.preferredDuration = Math.max(3, +$("#prefLen").value || 10); draft.learn = $("#learn").checked;
   draft.interests = readTokens();
   draft.blocked = $("#blocked").value.split("\n").map((s) => s.trim()).filter(Boolean);
+  draftUi.pleaOn = $("#pleaOn").checked; draftUi.pleaText = $("#pleaText").value.trim() || DEFAULT_PLEA;
 }
 sel.addEventListener("change", () => {
   readSettings();
@@ -863,7 +831,8 @@ $("#sliders").addEventListener("input", (e) => {
 $("#exploration").addEventListener("input", (e) => ($("#explorationOut").textContent = e.target.value + "%"));
 $("#diversity").addEventListener("input", (e) => ($("#diversityOut").textContent = e.target.value + "%"));
 $("#checkFormula").addEventListener("click", () => {
-  try { new Formula($("#formula").value).evaluate(features(VIDEOS[0], { interests: {}, preferredDuration: 10, recentAuthors: [] }), VIDEOS[0]);
+  try { const v = VIDEOS[0] || makeVideo({ id: "0" });
+    new Formula($("#formula").value).evaluate(features(v, { interests: {}, preferredDuration: 10, recentAuthors: [] }), v);
     $("#formulaMsg").className = "msg ok"; $("#formulaMsg").textContent = "✅ Formula is valid"; }
   catch (e) { $("#formulaMsg").className = "msg err"; $("#formulaMsg").textContent = "❌ " + e.message; }
 });
@@ -871,13 +840,35 @@ $("#preview").addEventListener("click", () => {
   readSettings();
   try {
     const r = rankAll(VIDEOS, draft, recentAuthors());
-    $("#rank").innerHTML = r.map((s) => `<div><b>${(s.score >= 0 ? "+" : "") + s.score.toFixed(2)}</b>@${esc(s.video.author)} · ${esc(s.video.description.replace(/^Demo /, ""))}</div>`).join("");
+    $("#rank").innerHTML = r.map((s) => `<div><b>${(s.score >= 0 ? "+" : "") + s.score.toFixed(2)}</b>@${esc(s.video.author)}${s.video.description ? " · " + esc(s.video.description) : ""}</div>`).join("");
   } catch (e) { $("#rank").innerHTML = `<div class="msg err">❌ ${esc(e.message)}</div>`; }
+});
+
+/* videos you add by link */
+function parseLink(text) {
+  const m = String(text).match(/tiktok\.com\/@([\w.-]+)\/(?:video|photo)\/(\d{8,25})/i) || String(text).match(/tiktok\.com\/(?:embed\/v2|player\/v1|share\/video)\/(\d{8,25})/i);
+  if (!m) return null;
+  return m.length === 3 ? { id: m[2], author: m[1] } : { id: m[1], author: "" };
+}
+function renderVideoList() {
+  const base = BASE.filter((o) => !broken.has(String(o.id))).map((o) => `<div class="vrow"><span>@${esc(o.author)} <small>· built in</small></span><span></span></div>`);
+  const mine = draftExtra.map((o, i) => `<div class="vrow"><span>@${esc(o.author || "?")} <small>· ${esc(o.id)}</small></span><button data-rm="${i}" aria-label="Remove">×</button></div>`);
+  $("#vlist").innerHTML = [...mine, ...base].join("") || '<p class="hint">No videos yet.</p>';
+}
+$("#vlist").addEventListener("click", (e) => { const i = e.target.dataset.rm; if (i !== undefined) { draftExtra.splice(+i, 1); renderVideoList(); } });
+$("#addBtn").addEventListener("click", () => {
+  const v = parseLink($("#addUrl").value);
+  const msg = $("#addMsg");
+  if (!v) { msg.className = "msg err"; msg.textContent = "That doesn't look like a TikTok video link. Use Share › Copy link, then open it once to get the full tiktok.com/@user/video/… address."; return; }
+  if (draftExtra.some((x) => x.id === v.id) || BASE.some((x) => String(x.id) === v.id)) { msg.className = "msg"; msg.textContent = "Already in your list."; return; }
+  broken.delete(v.id); store.set("broken", [...broken]);
+  draftExtra.unshift(v); $("#addUrl").value = ""; renderVideoList();
+  msg.className = "msg ok"; msg.textContent = "Added - press Save to put it in your feed.";
 });
 
 function renderTokens() {
   const items = Object.entries(draft.interests).sort((a, b) => b[1] - a[1]);
-  $("#tokens").innerHTML = items.length ? items.map(([t, v]) => tokRow(t, v)).join("") : `<p class="hint">No interests yet - watch some clips or add one.</p>`;
+  $("#tokens").innerHTML = items.length ? items.map(([t, v]) => tokRow(t, v)).join("") : `<p class="hint">No interests yet - watch some videos or add one.</p>`;
 }
 const tokRow = (t, v) => `<div class="tok"><input type="text" value="${esc(t)}" data-t><input type="number" step="0.1" min="-3" max="3" value="${(+v).toFixed(2)}" data-v><button data-del aria-label="Remove">×</button></div>`;
 function readTokens() {
@@ -891,7 +882,7 @@ function readTokens() {
 $("#tokens").addEventListener("click", (e) => { if (e.target.dataset.del !== undefined) e.target.closest(".tok").remove(); });
 $("#addTok").addEventListener("click", () => {
   if (!document.querySelector("#tokens .tok")) $("#tokens").innerHTML = "";
-  $("#tokens").insertAdjacentHTML("beforeend", tokRow("#", 1)); $("#tokens").lastElementChild.querySelector("input").focus();
+  $("#tokens").insertAdjacentHTML("beforeend", tokRow("@", 1)); $("#tokens").lastElementChild.querySelector("input").focus();
 });
 $("#resetTok").addEventListener("click", () => { draft.interests = {}; renderTokens(); });
 
@@ -908,7 +899,7 @@ $("#exportFile").addEventListener("change", async (e) => {
   } catch (err) { $("#exportInfo").className = "msg err"; $("#exportInfo").textContent = "Couldn't read that file: " + err.message; }
 });
 $("#fit").addEventListener("click", () => {
-  if (!history.length && !Object.keys(exportSeeds).length) { $("#report").textContent = "Watch some clips first (finish a few, skip a few), or load your TikTok export."; return; }
+  if (!history.length && !Object.keys(exportSeeds).length) { $("#report").textContent = "Watch some videos first (finish a few, skip a few), or load your TikTok export."; return; }
   fitResult = learn(history, exportSeeds, exportStats);
   $("#report").textContent = fitResult.report.join("\n");
   $("#applyFit").disabled = false;
@@ -934,31 +925,34 @@ function renderWhy() {
   $("#why").innerHTML = `<p style="font-size:13px">@${esc(s.video.author)} · ${esc(PRESETS[cfg.preset].name)}<br>Score <b>${s.score.toFixed(2)}</b>
     ${s.explored ? `<br>🎲 Picked at random by exploration (${Math.round(cfg.exploration * 100)}% of the time).` : ""}</p>
     <table class="why">${rows}</table>${matched.length ? `<p class="hint">Matched interests: ${matched.join(", ")}</p>` : ""}
-    ${cfg.preset === "formula" ? `<p class="hint">Formula: <code>${esc(cfg.formula)}</code></p>` : ""}`;
+    ${cfg.preset === "formula" ? `<p class="hint">Formula: <code>${esc(cfg.formula)}</code></p>` : ""}
+    <p class="hint">TikTok's player shares no view or like counts with apps, so popularity-type signals are low for every video.</p>`;
 }
 
 /* ============================================================ keyboard + start */
 document.addEventListener("keydown", (e) => {
   if (e.target.closest("input, textarea, select")) return;
   const settingsOpen = $("#settings").classList.contains("show");
-  if (e.key === "Escape") { settingsOpen ? closeSettings(false) : closeSheets(); return; }
+  if (e.key === "Escape") { if (settingsOpen) closeSettings(false); return; }
   if (settingsOpen) return;
   const k = e.key.toLowerCase();
   if (["arrowdown", "j", "pagedown"].includes(k)) { e.preventDefault(); go(1); }
   else if (["arrowup", "k", "pageup"].includes(k)) { e.preventDefault(); go(-1); }
   else if (k === " ") { e.preventDefault(); togglePause(); }
-  else if (k === "c") openComments();
-  else if (k === "e") openExport();
   else if (k === "m") setMuted(!muted);
   else if (k === "s") openSettings();
   else if (k === "i") openSettings("why");
 });
+let BASE = [];
 setMuted(true);
-fetch("data.json").then((r) => r.json()).then((d) => {
-  VIDEOS = d.videos;
+fetch("videos.json").then((r) => r.json()).then((d) => {
+  BASE = d.videos;
+  rebuildVideos(BASE);
+  VIDEOS.forEach(enrich);
+  if (!VIDEOS.length) { toast("No playable videos - add one in ⚙ › Videos", 6000); return; }
   ensureAhead();
   arrive(0);
-}).catch(() => toast("Couldn't load the demo clips", 5000));
+}).catch(() => toast("Couldn't load the video list", 5000));
 </script>
 </body>
 </html>
