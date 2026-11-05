@@ -22,7 +22,19 @@ if ($studio) {
     Start-Process $exe -Wait
 }
 
-# 2. Chrome Remote Desktop host (needs admin -> one UAC prompt)
+# 2. Claude Sync plugin (lets Claude's code appear in Studio with one tap)
+Step 'Claude Sync plugin for Roblox Studio'
+$pluginDir = Join-Path $env:LOCALAPPDATA 'Roblox\Plugins'
+New-Item -ItemType Directory -Force -Path $pluginDir | Out-Null
+$src = Join-Path $PSScriptRoot 'plugin\ClaudeSync.lua'
+if (Test-Path $src) {
+    Copy-Item $src $pluginDir -Force
+} else {
+    Invoke-WebRequest 'https://raw.githubusercontent.com/vendemiaraul-cyber/python-disconnected/studio/plugin/ClaudeSync.lua' -OutFile (Join-Path $pluginDir 'ClaudeSync.lua') -UseBasicParsing
+}
+Write-Host 'Installed. Restart Roblox Studio if it is open; look for the "Claude" toolbar in the Plugins tab.'
+
+# 3. Chrome Remote Desktop host (needs admin -> one UAC prompt)
 Step 'Chrome Remote Desktop host'
 $crd = @("${env:ProgramFiles(x86)}\Google\Chrome Remote Desktop",
          "$env:ProgramFiles\Google\Chrome Remote Desktop") | Where-Object { Test-Path $_ }
@@ -37,7 +49,7 @@ if ($crd) {
     if ($p.ExitCode -ne 0) { throw "Chrome Remote Desktop install failed (code $($p.ExitCode))." }
 }
 
-# 3. Keep the PC reachable: never sleep while plugged in
+# 4. Keep the PC reachable: never sleep while plugged in
 Step 'Power settings (no sleep while plugged in)'
 try {
     powercfg /change standby-timeout-ac 0
@@ -45,7 +57,7 @@ try {
     Write-Host 'Done.'
 } catch { Write-Host 'Could not change power settings - set Sleep to "Never" manually.' -ForegroundColor Yellow }
 
-# 4. Finish: one-time sign-in that links this PC to your Google account
+# 5. Finish: one-time sign-in that links this PC to your Google account
 Step 'Last step - in the browser page that just opened:'
 Write-Host '  1. Sign in with a Google account (use the same one on your iPhone).'
 Write-Host '  2. Under "Set up remote access", click "Turn on", name the PC, pick a 6+ digit PIN.'
