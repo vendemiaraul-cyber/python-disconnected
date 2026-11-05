@@ -7,7 +7,8 @@ the phone is slow and awkward, so the code reaches Studio through the
 **Claude Sync** plugin (`plugin/ClaudeSync.lua`). They tap **Pull** in Studio
 and your scripts show up.
 
-Assume this setup in every session in this repo, unless the user says they're on the PC directly.
+Assume this setup in every session in this repo, including sessions started from the Claude
+iPhone app's Code tab (the usual case), unless the user says they're on the PC directly.
 
 # How to deliver game code
 

@@ -48,7 +48,7 @@ through remote desktop. You never have to explain the setup again.
 
 How it works:
 
-1. Open Claude Code on this repo and describe what you want, for example
+1. In the Claude iPhone app, open the **Code** tab, pick this repo, and describe what you want, for example
    *"make a coin that spins and gives +1 point when touched"*.
 2. Claude writes the Luau scripts into the `game/` folder and pushes them to the `studio` branch.
 3. In Studio, open the **Plugins** tab and tap **Claude → Pull**, or the big button in the floating *Claude Sync* panel.
@@ -60,5 +60,8 @@ code comes in by itself about every 90 seconds, with no tapping.
 
 A test script (`HelloClaude`) comes included. After your first Pull, press Play and you should see a
 spinning purple cube. Ask Claude to remove it whenever you like.
+
+Using regular Claude chat instead of the Code tab? See [CLAUDE-APP-INSTRUCTIONS.md](CLAUDE-APP-INSTRUCTIONS.md)
+for a block of text to paste into a Claude Project.
 
 > This repo is public, so anyone can see the game code. Don't put passwords or keys in it.
