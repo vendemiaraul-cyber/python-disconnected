@@ -32,7 +32,7 @@ One script tag, like Leaflet. Real TikTok videos through TikTok's official playe
 
 ```html
 <div id="feed" style="width:400px;height:720px"></div>
-<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@032b28bca70cfcb62cf34c59db35c8c2089b157b/js/dist/minitok.js"></script>
 <script>MiniTok.mount("#feed", { algorithm: { preset: "for_you" } });</script>
 ```
 

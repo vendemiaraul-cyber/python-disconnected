@@ -10,16 +10,19 @@ order (presets, weight sliders, a custom formula, learning from what you watch).
 
 ```html
 <div id="feed" style="width:400px;height:720px"></div>
-<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@032b28bca70cfcb62cf34c59db35c8c2089b157b/js/dist/minitok.js"></script>
 <script>
   const feed = MiniTok.mount("#feed");
 </script>
 ```
 
+That link is pinned to an exact version, so it never changes under you. (When the repo gets a `v1.0.0`
+release, `python-disconnected@1/js/dist/minitok.js` will also work and follow 1.x updates.)
+
 As an ES module:
 
 ```js
-import MiniTok from "https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.mjs";
+import MiniTok from "https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@032b28bca70cfcb62cf34c59db35c8c2089b157b/js/dist/minitok.mjs";
 MiniTok.mount(document.getElementById("feed"), { algorithm: { preset: "discovery" } });
 ```
 

@@ -6,14 +6,14 @@
 
 ## Load
 
-- Script tag (global `MiniTok`): https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.js
-- ES module (default export + named exports): https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.mjs
+- Script tag (global `MiniTok`): https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@032b28bca70cfcb62cf34c59db35c8c2089b157b/js/dist/minitok.js
+- ES module (default export + named exports): https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@032b28bca70cfcb62cf34c59db35c8c2089b157b/js/dist/minitok.mjs
 
 ## Minimal app
 
 ```html
 <div id="feed" style="width:100%;max-width:420px;height:100vh;margin:auto"></div>
-<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@1/js/dist/minitok.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/vendemiaraul-cyber/python-disconnected@032b28bca70cfcb62cf34c59db35c8c2089b157b/js/dist/minitok.js"></script>
 <script>
   const feed = MiniTok.mount("#feed", {
     videos: ["https://www.tiktok.com/@hankgreen1/video/7047596209028074758"], // optional; 5 starter videos by default
