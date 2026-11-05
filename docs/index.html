@@ -59,7 +59,7 @@
   .btn.primary { background: var(--red); border-color: var(--red); color: #fff; }
   .btn.primary:hover { background: #ff4a6e; }
 
-  .phone { justify-self: center; width: min(320px, 100%); border-radius: 38px; padding: 12px; background: #111;
+  .phone { display: block; justify-self: center; width: min(320px, 100%); border-radius: 38px; padding: 12px; background: #111;
            border: 1px solid #333; box-shadow: 0 30px 80px rgba(254,44,85,.18), 0 0 0 6px #0a0a0a; }
   .phone img { border-radius: 28px; width: 100%; aspect-ratio: 400 / 740; object-fit: cover; }
 
@@ -138,6 +138,7 @@
       <a href="#algorithm">Algorithm</a>
       <a href="#data">Your data</a>
       <a href="#install">Install</a>
+      <a href="app/">Try it</a>
       <a href="https://github.com/vendemiaraul-cyber/python-disconnected/tree/claude/minitok-app">GitHub</a>
     </div>
   </div>
@@ -152,11 +153,12 @@
         shows up to 30 read-only comments you can export, and ranks every video with an algorithm you pick,
         tune, type yourself, or fit from your own TikTok data.</p>
       <div class="cta">
-        <a class="btn primary" href="#install">Get started</a>
+        <a class="btn primary" href="app/">▶ Try it in your browser</a>
+        <a class="btn" href="#install">Install the app</a>
         <a class="btn" href="https://github.com/vendemiaraul-cyber/python-disconnected/tree/claude/minitok-app">View the code</a>
       </div>
     </div>
-    <div class="phone"><img src="assets/feed.png" alt="MiniTok For You feed: video with only a comments and an export button on the right, creator name and caption at the bottom" width="400" height="740"></div>
+    <a class="phone" href="app/" title="Open the browser preview"><img src="assets/feed.png" alt="MiniTok For You feed: video with only a comments and an export button on the right, creator name and caption at the bottom" width="400" height="740"></a>
   </div>
 </header>
 
@@ -186,7 +188,8 @@
 <section id="screens">
   <div class="wrap">
     <h2>What it looks like</h2>
-    <p class="sub">Screenshots of the real app, taken while it played its offline demo clips.</p>
+    <p class="sub">Screenshots of the desktop app on its offline demo clips. Or skip the install and
+      <a href="app/">try the browser preview</a>: same screen, same algorithm, works on your phone.</p>
     <div class="shots">
       <figure><img src="assets/feed.png" alt="Feed screen" width="400" height="740" loading="lazy">
         <figcaption><b>Feed.</b> Comments and export are the only actions, with counts underneath like TikTok's.</figcaption></figure>
@@ -196,9 +199,8 @@
         <figcaption><b>⚙ Algorithm.</b> Presets, a slider per signal, exploration and creator variety.</figcaption></figure>
     </div>
     <p class="note">These screenshots use the built-in offline demo, so the clips are test patterns and the
-      comments are placeholder text, not real TikTok comments. With network access to TikTok, the app downloads
-      real videos and fetches their real comments with Scrapy. That live path hasn't been tested against the
-      real site yet.</p>
+      comments are placeholder text, not real TikTok comments. In the desktop app, comments for TikTok videos are
+      fetched live with Scrapy; that has been checked against real TikTok (30 of a video's 2,012 comments).</p>
   </div>
 </section>
 
@@ -303,12 +305,14 @@ minitok --source @nasa --source <span class="s">"#cooking"</span></pre>
         <li>42 automated tests pass</li>
         <li>Full app run on the offline demo: feed, comments, export, settings</li>
         <li>Comments capped at 30 and deleted when you swipe</li>
-        <li>Scrapy spider against a local fake comment server</li>
+        <li>Scrapy spider against real TikTok: stops at exactly 30 comments</li>
+        <li>Browser preview on phone and desktop screens</li>
         <li>Data export parsing and fitting on sample data</li>
       </ul></div>
       <div class="card todo"><h3>Not tested yet</h3><ul>
-        <li>Downloading real TikTok videos and comments; the build machine couldn't reach TikTok</li>
-        <li>TikTok may block anonymous requests. Picking a browser under ⚙ › Storage lets yt-dlp use your cookies</li>
+        <li>Downloading real TikTok videos: TikTok answered the cloud build server with its anti-bot page, so
+          this still needs a run on a home connection</li>
+        <li>If TikTok blocks downloads there too, picking a browser under ⚙ › Storage lets yt-dlp use your cookies</li>
       </ul></div>
     </div>
   </div>

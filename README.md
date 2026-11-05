@@ -20,7 +20,9 @@ including fitting it to **your own data**.
 └──────────────────────────┘
 ```
 
-Project page: [`docs/index.html`](docs/index.html) (served by GitHub Pages from `/docs`).
+Project page: https://vendemiaraul-cyber.github.io/python-disconnected/ (published from the `gh-pages` branch;
+source in `docs/`). **Try it without installing:** the page's browser preview (`docs/app/`) runs the same feed,
+comments, export and algorithm on the demo clips. Rebuild its clips with `python scripts/build_web_preview.py`.
 
 ## Install & run
 
