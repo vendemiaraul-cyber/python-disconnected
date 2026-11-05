@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiniTok</title>
+<meta name="description" content="A mini TikTok for your desktop: a For You feed whose algorithm you control, 30 read-only comments per video, export, and an algorithm fitted from your own data.">
+<style>
+  :root {
+    --bg: #000;
+    --panel: #121212;
+    --panel-2: #1b1b1b;
+    --line: #2a2a2a;
+    --text: #f5f5f5;
+    --muted: #a3a3a3;
+    --red: #fe2c55;
+    --cyan: #25f4ee;
+    --radius: 14px;
+    --max: 1080px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  img { max-width: 100%; height: auto; display: block; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+
+  /* nav */
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(0,0,0,.82); backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; gap: 22px; height: 56px; }
+  .logo { font-weight: 800; font-size: 19px; letter-spacing: -.3px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--text); position: relative;
+               box-shadow: -2px -2px 0 var(--cyan), 2px 2px 0 var(--red); }
+  .logo-mark::after { content: "▶"; position: absolute; inset: 0; display: grid; place-items: center;
+                      color: #000; font-size: 11px; }
+  nav .links { margin-left: auto; display: flex; gap: 18px; font-size: 14px; }
+  nav .links a { color: var(--muted); }
+  nav .links a:hover { color: var(--text); text-decoration: none; }
+
+  /* hero */
+  .hero { padding: 64px 0 40px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-block; font-size: 13px; font-weight: 600; color: var(--cyan);
+             border: 1px solid rgba(37,244,238,.35); border-radius: 999px; padding: 3px 12px; margin-bottom: 18px; }
+  h1 { font-size: clamp(36px, 5.4vw, 60px); line-height: 1.05; margin: 0 0 18px; letter-spacing: -1.5px; }
+  h1 .accent { color: var(--red); }
+  .lead { font-size: 18px; color: #d6d6d6; max-width: 34em; margin: 0 0 28px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 8px;
+         font-weight: 700; font-size: 15px; border: 1px solid var(--line); color: var(--text); background: var(--panel-2); }
+  .btn:hover { text-decoration: none; background: #262626; }
+  .btn.primary { background: var(--red); border-color: var(--red); color: #fff; }
+  .btn.primary:hover { background: #ff4a6e; }
+
+  .phone { justify-self: center; width: min(320px, 100%); border-radius: 38px; padding: 12px; background: #111;
+           border: 1px solid #333; box-shadow: 0 30px 80px rgba(254,44,85,.18), 0 0 0 6px #0a0a0a; }
+  .phone img { border-radius: 28px; width: 100%; aspect-ratio: 400 / 740; object-fit: cover; }
+
+  /* sections */
+  section { padding: 56px 0; border-top: 1px solid #141414; }
+  h2 { font-size: clamp(26px, 3.4vw, 36px); margin: 0 0 10px; letter-spacing: -.6px; }
+  .sub { color: var(--muted); margin: 0 0 32px; max-width: 46em; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .icon { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 12px;
+          background: rgba(254,44,85,.12); color: var(--red); font-size: 18px; }
+  .icon.c { background: rgba(37,244,238,.1); color: var(--cyan); }
+
+  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
+  figure { margin: 0; }
+  figure img { border-radius: 12px; border: 1px solid var(--line); width: 100%; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  figcaption b { color: var(--text); }
+  .note { font-size: 13px; color: var(--muted); background: var(--panel); border: 1px solid var(--line);
+          border-left: 3px solid var(--cyan); border-radius: 8px; padding: 10px 14px; margin-top: 22px; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+  /* let grid columns shrink below their content (code blocks scroll instead of widening the page) */
+  .hero .wrap > *, .split > *, .grid > *, .shots > *, .status > * { min-width: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 22px; }
+  .chip { font-size: 13px; padding: 5px 11px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); }
+  .chip.on { border-color: var(--red); color: #fff; background: rgba(254,44,85,.15); }
+  pre { background: #0d0d0d; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto;
+        font-size: 14px; line-height: 1.55; margin: 0; color: #e6e6e6; }
+  pre .k { color: var(--cyan); }
+  pre .s { color: #ffb86b; }
+  pre .c { color: #777; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  td code { color: var(--cyan); font-size: 13px; }
+
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  ol.steps li { counter-increment: s; position: relative; padding-left: 44px; color: #d6d6d6; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 30px; height: 30px;
+                        border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 14px; }
+
+  .status { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .status ul { margin: 0; padding-left: 20px; color: #d6d6d6; }
+  .status li { margin-bottom: 6px; }
+  .ok h3 { color: var(--cyan); }
+  .todo h3 { color: #ffb86b; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+
+  @media (max-width: 860px) {
+    .hero .wrap, .split, .status { grid-template-columns: 1fr; }
+    .grid, .shots { grid-template-columns: 1fr 1fr; }
+    .hero { padding-top: 40px; }
+  }
+  @media (max-width: 560px) {
+    .grid, .shots { grid-template-columns: 1fr; }
+    nav .links { display: none; }
+    .phone { width: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#"><span class="logo-mark"></span>MiniTok</a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#screens">Screens</a>
+      <a href="#algorithm">Algorithm</a>
+      <a href="#data">Your data</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/vendemiaraul-cyber/python-disconnected/tree/claude/minitok-app">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Python · PySide6 · yt-dlp · Scrapy</span>
+      <h1>A mini TikTok where <span class="accent">you</span> write the algorithm.</h1>
+      <p class="lead">A phone-sized For You feed for your desktop. It downloads only a few videos at a time,
+        shows up to 30 read-only comments you can export, and ranks every video with an algorithm you pick,
+        tune, type yourself, or fit from your own TikTok data.</p>
+      <div class="cta">
+        <a class="btn primary" href="#install">Get started</a>
+        <a class="btn" href="https://github.com/vendemiaraul-cyber/python-disconnected/tree/claude/minitok-app">View the code</a>
+      </div>
+    </div>
+    <div class="phone"><img src="assets/feed.png" alt="MiniTok For You feed: video with only a comments and an export button on the right, creator name and caption at the bottom" width="400" height="740"></div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Small on purpose</h2>
+    <p class="sub">The screen looks like TikTok, but the right edge has only two buttons: comments and export.
+      No likes, no favourites, nothing to post.</p>
+    <div class="grid">
+      <div class="card"><div class="icon">▶</div><h3>TikTok-style feed</h3>
+        <p>Full-screen looping video, For You header, caption and sound at the bottom. Scroll, drag or use
+          the arrow keys to move between videos.</p></div>
+      <div class="card"><div class="icon c">💬</div><h3>30 comments, read-only</h3>
+        <p>Up to 30 comments are downloaded for the video on screen and deleted as soon as you swipe away.</p></div>
+      <div class="card"><div class="icon">➦</div><h3>Export</h3>
+        <p>Save the current video's comments as JSON, CSV or plain text.</p></div>
+      <div class="card"><div class="icon c">⚙</div><h3>Settings on the For You page</h3>
+        <p>Pick a type of algorithm, move weight sliders, or type your own ranking formula.</p></div>
+      <div class="card"><div class="icon">◎</div><h3>Learns from your data</h3>
+        <p>Load your TikTok data export and fit the weights and interests that explain what you actually watch.</p></div>
+      <div class="card"><div class="icon c">⌫</div><h3>Light on storage</h3>
+        <p>Only the previous, current and next couple of videos stay on disk. The cache is wiped on exit.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="wrap">
+    <h2>What it looks like</h2>
+    <p class="sub">Screenshots of the real app, taken while it played its offline demo clips.</p>
+    <div class="shots">
+      <figure><img src="assets/feed.png" alt="Feed screen" width="400" height="740" loading="lazy">
+        <figcaption><b>Feed.</b> Comments and export are the only actions, with counts underneath like TikTok's.</figcaption></figure>
+      <figure><img src="assets/comments.png" alt="Comments bottom sheet showing 30 comments" width="400" height="740" loading="lazy">
+        <figcaption><b>Comments.</b> A bottom sheet with up to 30 comments and an Export button.</figcaption></figure>
+      <figure><img src="assets/settings-algorithm.png" alt="Algorithm settings with weight sliders" width="560" height="760" loading="lazy">
+        <figcaption><b>⚙ Algorithm.</b> Presets, a slider per signal, exploration and creator variety.</figcaption></figure>
+    </div>
+    <p class="note">These screenshots use the built-in offline demo, so the clips are test patterns and the
+      comments are placeholder text, not real TikTok comments. With network access to TikTok, the app downloads
+      real videos and fetches their real comments with Scrapy. That live path hasn't been tested against the
+      real site yet.</p>
+  </div>
+</section>
+
+<section id="algorithm">
+  <div class="wrap split">
+    <div>
+      <h2>Choose, tune or write the algorithm</h2>
+      <p class="sub" style="margin-bottom:0">Every video gets nine signals between 0 and 1. The algorithm decides how much each one counts.</p>
+      <div class="chips">
+        <span class="chip on">For You (TikTok-style)</span><span class="chip">Most Popular</span>
+        <span class="chip">Fresh / Newest</span><span class="chip">Niche</span><span class="chip">Discovery</span>
+        <span class="chip">Random</span><span class="chip">Custom weights</span><span class="chip">Custom formula</span>
+        <span class="chip">Learned from my data</span>
+      </div>
+      <p style="color:#d6d6d6;margin:0 0 12px">Or type a formula. It runs in a sandbox, so a formula pasted from someone else can't run code.</p>
+<pre><span class="k">3</span>*interest + like_rate
+  + (<span class="k">2</span> <span class="k">if</span> has(<span class="s">"#cats"</span>) <span class="k">else</span> <span class="k">0</span>)
+  - <span class="k">0.5</span>*popularity   <span class="c"># fewer viral videos</span></pre>
+    </div>
+    <div>
+      <table>
+        <thead><tr><th>Signal</th><th>Measures</th></tr></thead>
+        <tbody>
+          <tr><td><code>interest</code></td><td>Match with your hashtags, creators, sounds and words</td></tr>
+          <tr><td><code>popularity</code></td><td>Views, log-scaled</td></tr>
+          <tr><td><code>like_rate</code></td><td>Likes per view</td></tr>
+          <tr><td><code>comment_rate</code></td><td>Comments per view</td></tr>
+          <tr><td><code>share_rate</code></td><td>Shares per view</td></tr>
+          <tr><td><code>freshness</code></td><td>How new it is</td></tr>
+          <tr><td><code>duration_fit</code></td><td>Closeness to your preferred length</td></tr>
+          <tr><td><code>novelty</code></td><td>Creators you haven't seen lately</td></tr>
+          <tr><td><code>random</code></td><td>Pure exploration</td></tr>
+        </tbody>
+      </table>
+      <p style="color:var(--muted);font-size:14px;margin-top:14px">While you watch, finishing or looping a video
+        boosts its tags, creator and sound, and skipping lowers them. Press <b>I</b> to see why a video was picked.</p>
+    </div>
+  </div>
+</section>
+
+<section id="data">
+  <div class="wrap split">
+    <div>
+      <h2>Find your algorithm from your own data</h2>
+      <p class="sub">MiniTok fits the model that best explains what you finish, rewatch and skip. Everything stays on your computer.</p>
+      <ol class="steps">
+        <li>In TikTok, go to Settings › Account › Download your data and request JSON.</li>
+        <li>In MiniTok, open ⚙ › Find my algorithm and load the .zip, .json or folder.</li>
+        <li>MiniTok reads watch history, likes, favourites, shares, searches and follows. It estimates watch time
+          from the gaps between timestamps and looks up a sample of the videos.</li>
+        <li>It fits a logistic regression and an interest profile, shows a report, and lets you apply the result.</li>
+      </ol>
+      <p class="note">TikTok's own recommender is private, so no app can copy it exactly. What this recovers is
+        your personal ranking, as closely as your data allows.</p>
+    </div>
+    <figure><img src="assets/settings-find.png" alt="Find my algorithm tab with export loading and fitting controls" width="560" height="760" loading="lazy">
+      <figcaption><b>⚙ Find my algorithm.</b> Load an export, use your in-app history, fit, apply.</figcaption></figure>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap split">
+    <div>
+      <h2>Install</h2>
+      <p class="sub">Needs Python 3.10+. The offline demo also needs ffmpeg.</p>
+<pre><span class="c"># get the code</span>
+git clone -b claude/minitok-app \
+  https://github.com/vendemiaraul-cyber/python-disconnected
+cd python-disconnected
+pip install -e .
+
+<span class="c"># try it offline</span>
+minitok demo
+
+<span class="c"># real TikTok creators and hashtags</span>
+minitok --source @nasa --source <span class="s">"#cooking"</span></pre>
+    </div>
+    <div>
+      <h2>Controls</h2>
+      <table>
+        <tbody>
+          <tr><td>Scroll, drag up, ↓, J</td><td>Next video</td></tr>
+          <tr><td>↑, K</td><td>Previous video</td></tr>
+          <tr><td>Click, Space</td><td>Pause</td></tr>
+          <tr><td>C</td><td>Comments</td></tr>
+          <tr><td>E</td><td>Export comments</td></tr>
+          <tr><td>S</td><td>Settings</td></tr>
+          <tr><td>M</td><td>Mute</td></tr>
+          <tr><td>I</td><td>Why am I seeing this?</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <h2>Status</h2>
+    <p class="sub">An early version. Here's what has been checked and what hasn't.</p>
+    <div class="status">
+      <div class="card ok"><h3>Tested</h3><ul>
+        <li>42 automated tests pass</li>
+        <li>Full app run on the offline demo: feed, comments, export, settings</li>
+        <li>Comments capped at 30 and deleted when you swipe</li>
+        <li>Scrapy spider against a local fake comment server</li>
+        <li>Data export parsing and fitting on sample data</li>
+      </ul></div>
+      <div class="card todo"><h3>Not tested yet</h3><ul>
+        <li>Downloading real TikTok videos and comments; the build machine couldn't reach TikTok</li>
+        <li>TikTok may block anonymous requests. Picking a browser under ⚙ › Storage lets yt-dlp use your cookies</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>MiniTok. Not affiliated with TikTok.</span>
+    <a href="https://github.com/vendemiaraul-cyber/python-disconnected/tree/claude/minitok-app">Source on GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
