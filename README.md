@@ -82,7 +82,20 @@ While you watch, MiniTok learns: finishing or looping a video raises its
 hashtags/creator/sound, skipping lowers them, and opening the comments counts as
 interest. Press **I** to see the score breakdown for the current video.
 
-### Find my algorithm (your own data)
+### Continue with TikTok (nothing to download)
+⚙ › *Find my algorithm* › **Continue with TikTok**: approve in your browser, then keep watching.
+MiniTok uses TikTok's official **Login Kit** and **Data Portability API** to ask for your activity
+data (watch history, likes, favourites, searches, shares), waits while TikTok prepares it (minutes to
+hours; it carries on after a restart), downloads it, fits your algorithm and switches the feed to
+*Learned from my data* by itself.
+
+One-time setup for whoever runs this copy: create an app on
+[developers.tiktok.com](https://developers.tiktok.com/apps) with Login Kit and the Data Portability API
+(scope `portability.activity.single`), register the redirect URI `http://127.0.0.1:*/callback/`, and
+paste its client key and secret when MiniTok asks. TikTok reviews the app, usually in 3–4 weeks.
+The keys and tokens stay in `~/.minitok/tiktok.json` (owner-only permissions).
+
+### Find my algorithm from an export file
 1. In TikTok: *Settings › Account › Download your data* (JSON).
 2. ⚙ › *Find my algorithm* › *Load export file…* (zip, json, txt or folder).
 3. MiniTok reads watch history, likes, favourites, shares, searches, follows and

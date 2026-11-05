@@ -253,7 +253,13 @@ class MainWindow(QMainWindow):
         self._connect()
         self.resize(400, 740)
         self.setMinimumSize(300, 520)
+        from .tiktok_connect import TikTokSync
+
+        self.tiktok = TikTokSync(self.downloader, self.events, self)
+        self.tiktok.learned.connect(self.on_tiktok_learned, Qt.QueuedConnection)
+        self.tiktok.failed.connect(lambda msg: self.show_toast(f"TikTok: {msg}", 4000), Qt.QueuedConnection)
         QTimer.singleShot(0, self.feed.start)
+        QTimer.singleShot(1500, self.tiktok.resume_if_pending)  # finish a data request from last time
 
     # -- construction ---------------------------------------------------------
     def _build_ui(self) -> None:
@@ -636,8 +642,11 @@ class MainWindow(QMainWindow):
 
         was_playing = self.player.playbackState() == QMediaPlayer.PlayingState
         self.player.pause()
-        dlg = SettingsDialog(self.config, self.feed, self.downloader, self.events, self.cache, self)
-        if dlg.exec():
+        dlg = SettingsDialog(self.config, self.feed, self.downloader, self.events, self.cache, self,
+                             tiktok=self.tiktok)
+        accepted = dlg.exec()
+        dlg.deleteLater()  # disconnects it from the TikTok sync signals
+        if accepted:
             sources_changed = dlg.apply_to(self.config)
             self.config.save()
             self.feed.reload_algorithm()
@@ -649,8 +658,20 @@ class MainWindow(QMainWindow):
         if was_playing and not self._paused_by_user:
             self.player.play()
 
+    def on_tiktok_learned(self, export, result) -> None:
+        """TikTok's data arrived and was fitted: switch the feed to it, no questions asked."""
+        self.config.algorithm.apply_learned(result)
+        try:
+            self.config.save()
+        except OSError:
+            pass
+        self.feed.reload_algorithm()
+        watched = len(export.watched)
+        self.show_toast(f"Your algorithm is ready - learned from {watched:,} videos you watched on TikTok", 4500)
+
     # -- lifecycle -----------------------------------------------------------------------
     def closeEvent(self, event) -> None:  # noqa: N802
+        self.tiktok.stop()  # a pending TikTok request is resumed on the next start
         stats = self._collect_stats() if self.feed.current else None
         self._stop_player()
         self.feed.shutdown(stats)

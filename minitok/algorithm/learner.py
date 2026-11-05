@@ -26,7 +26,7 @@ from typing import Callable, Iterable
 from ..events import Impression
 from ..models import Video
 from .features import FEATURE_NAMES, FEATURES, ViewerState, extract
-from .tiktok_export import ExportData, unique_ids, video_url
+from .tiktok_export import ExportData, load_export, unique_ids, video_url
 
 # "random" carries no information and "interest" is learned separately (token profile)
 LEARNED_FEATURES = [f for f in FEATURE_NAMES if f != "random"]
@@ -290,3 +290,21 @@ def learn(
         report.append("You tend to skip: " + ", ".join(bottom))
     report.append(f"Suggested exploration: {exploration:.0%} of videos picked at random.")
     return LearnResult(weights, interests, preferred, exploration, len(examples), positives, accuracy, report)
+
+
+def learn_from_export_file(
+    path,
+    fetch: Callable[[str], Video | None] | None = None,
+    sample: int = 60,
+    history: Iterable[Impression] = (),
+    progress: Callable[[int, int, str], None] | None = None,
+    should_stop: Callable[[], bool] | None = None,
+) -> tuple[ExportData, LearnResult]:
+    """Load a TikTok export (.zip/.json/folder) and fit on it plus any in-app history."""
+    export = load_export(path)
+    if export.is_empty():
+        raise ValueError("The TikTok data didn't contain any watch history, likes or searches")
+    examples = examples_from_history(history)
+    if fetch is not None and sample > 0:
+        examples += examples_from_export(export, fetch, sample=sample, progress=progress, should_stop=should_stop)
+    return export, learn(examples, export.seed_interests(), export.watch_stats())

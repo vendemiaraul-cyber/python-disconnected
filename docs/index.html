@@ -178,7 +178,8 @@
       <div class="card"><div class="icon c">⚙</div><h3>Settings on the For You page</h3>
         <p>Pick a type of algorithm, move weight sliders, or type your own ranking formula.</p></div>
       <div class="card"><div class="icon">◎</div><h3>Learns from your data</h3>
-        <p>Load your TikTok data export and fit the weights and interests that explain what you actually watch.</p></div>
+        <p>Tap Continue with TikTok and your watch history arrives through TikTok's official API. MiniTok fits
+          the algorithm by itself.</p></div>
       <div class="card"><div class="icon c">⌫</div><h3>Light on storage</h3>
         <p>Only the previous, current and next couple of videos stay on disk. The cache is wiped on exit.</p></div>
     </div>
@@ -247,8 +248,9 @@
       <h2>Find your algorithm from your own data</h2>
       <p class="sub">MiniTok fits the model that best explains what you finish, rewatch and skip. Everything stays on your computer.</p>
       <ol class="steps">
-        <li>In TikTok, go to Settings › Account › Download your data and request JSON.</li>
-        <li>In MiniTok, open ⚙ › Find my algorithm and load the .zip, .json or folder.</li>
+        <li>In MiniTok, open ⚙ › Find my algorithm and tap <b>Continue with TikTok</b>. Approve in your browser and
+          keep watching: TikTok's official Data Portability API sends your history to MiniTok. Or load a
+          "Download your data" file yourself.</li>
         <li>MiniTok reads watch history, likes, favourites, shares, searches and follows. It estimates watch time
           from the gaps between timestamps and looks up a sample of the videos.</li>
         <li>It fits a logistic regression and an interest profile, shows a report, and lets you apply the result.</li>
@@ -302,17 +304,19 @@ minitok --source @nasa --source <span class="s">"#cooking"</span></pre>
     <p class="sub">An early version. Here's what has been checked and what hasn't.</p>
     <div class="status">
       <div class="card ok"><h3>Tested</h3><ul>
-        <li>42 automated tests pass</li>
+        <li>49 automated tests pass</li>
         <li>Full app run on the offline demo: feed, comments, export, settings</li>
         <li>Comments capped at 30 and deleted when you swipe</li>
         <li>Scrapy spider against real TikTok: stops at exactly 30 comments</li>
         <li>Browser preview on phone and desktop screens</li>
+        <li>Continue with TikTok, end to end against a stand-in for TikTok's API</li>
         <li>Data export parsing and fitting on sample data</li>
       </ul></div>
       <div class="card todo"><h3>Not tested yet</h3><ul>
         <li>Downloading real TikTok videos: TikTok answered the cloud build server with its anti-bot page, so
           this still needs a run on a home connection</li>
         <li>If TikTok blocks downloads there too, picking a browser under ⚙ › Storage lets yt-dlp use your cookies</li>
+        <li>Continue with TikTok against the real API: it needs a TikTok developer app approved by TikTok first</li>
       </ul></div>
     </div>
   </div>

@@ -75,7 +75,7 @@ class _Worker(QObject):
 
 class SettingsDialog(QDialog):
     def __init__(self, config: AppConfig, feed: Feed, downloader: Downloader, events: EventLog,
-                 cache: Cache, parent: QWidget | None = None):
+                 cache: Cache, parent: QWidget | None = None, tiktok=None):
         super().__init__(parent)
         self.setWindowTitle("For You algorithm & settings")
         self.resize(560, 700)
@@ -83,6 +83,8 @@ class SettingsDialog(QDialog):
         self.downloader = downloader
         self.events = events
         self.cache = cache
+        self.config = config
+        self.tiktok = tiktok  # ui.tiktok_connect.TikTokSync, owned by the main window
         self.original_sources = (list(config.sources), config.local_folder)
         self.algo = AlgorithmConfig.from_dict(copy.deepcopy(config.algorithm.to_dict()))
         self.app = copy.deepcopy(config)
@@ -409,7 +411,27 @@ class SettingsDialog(QDialog):
             "Note: TikTok's own recommender is private, so no app can copy it exactly; this recovers your "
             "personal ranking as closely as your data allows."))
 
-        g1 = QGroupBox("1. TikTok data export (optional)")
+        if self.tiktok is not None:
+            g0 = QGroupBox("The easy way")
+            l0 = QVBoxLayout(g0)
+            l0.addWidget(_hint("Tap once and approve in your browser. TikTok sends MiniTok your watch history and "
+                               "likes, and your algorithm updates by itself when it arrives. Nothing to download."))
+            row = QHBoxLayout()
+            self.connect_btn = QPushButton("Continue with TikTok")
+            self.connect_btn.setObjectName("Primary")
+            self.connect_btn.clicked.connect(self._connect_tiktok)
+            row.addWidget(self.connect_btn)
+            row.addStretch(1)
+            l0.addLayout(row)
+            self.connect_status = _hint(self.tiktok.last_status)
+            l0.addWidget(self.connect_status)
+            lay.addWidget(g0)
+            self.tiktok.status.connect(self._tiktok_status)
+            self.tiktok.failed.connect(self._tiktok_status)
+            self.tiktok.learned.connect(self._tiktok_learned)
+            self._refresh_connect_button()
+
+        g1 = QGroupBox("Or: a TikTok data export file")
         l1 = QVBoxLayout(g1)
         l1.addWidget(_hint("Get it in TikTok: Settings › Account › Download your data (JSON recommended). "
                            "Load the .zip, the .json, or the unzipped folder."))
@@ -484,6 +506,33 @@ class SettingsDialog(QDialog):
         lay.addWidget(self.apply_btn)
         lay.addStretch(1)
         return w
+
+    def _connect_tiktok(self) -> None:
+        from .tiktok_connect import DeveloperAppDialog
+
+        if not self.tiktok.state.configured:
+            if not DeveloperAppDialog(self.tiktok.state, self).exec():
+                return
+        self.tiktok.start(login=True)
+        self._refresh_connect_button()
+
+    def _refresh_connect_button(self) -> None:
+        busy = self.tiktok.busy
+        self.connect_btn.setEnabled(not busy)
+        connected = self.tiktok.state.token is not None
+        self.connect_btn.setText("Working…" if busy else ("Update from TikTok" if connected else "Continue with TikTok"))
+
+    def _tiktok_status(self, text: str) -> None:
+        self.connect_status.setText(text)
+        self._refresh_connect_button()
+
+    def _tiktok_learned(self, _export, result) -> None:
+        # the main window has already applied it to the live config; show it here too
+        self.algo = AlgorithmConfig.from_dict(copy.deepcopy(self.config.algorithm.to_dict()))
+        self._load_algo_into_widgets()
+        self.report.setPlainText("\n".join(result.report))
+        self.connect_status.setText(self.tiktok.last_status)
+        self._refresh_connect_button()
 
     def _load_export_file(self) -> None:
         path, _ = QFileDialog.getOpenFileName(self, "TikTok data export", "",
@@ -591,13 +640,7 @@ class SettingsDialog(QDialog):
         if not self.result:
             return
         self._read_algo_widgets()
-        r = self.result
-        self.algo.learned_weights = dict(r.weights)
-        self.algo.interests = dict(r.interests)
-        if r.preferred_duration:
-            self.algo.preferred_duration = round(r.preferred_duration, 1)
-        self.algo.apply_preset("learned")
-        self.algo.exploration = r.exploration
+        self.algo.apply_learned(self.result)
         self._load_algo_into_widgets()
         self.tabs.setCurrentIndex(0)
 

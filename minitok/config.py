@@ -43,6 +43,15 @@ class AlgorithmConfig:
         self.exploration = preset.exploration
         self.diversity = preset.diversity
 
+    def apply_learned(self, result) -> None:
+        """Switch to "Learned from my data" using a ``learner.LearnResult``."""
+        self.learned_weights = dict(result.weights)
+        self.interests = dict(result.interests)
+        if result.preferred_duration:
+            self.preferred_duration = round(result.preferred_duration, 1)
+        self.apply_preset("learned")
+        self.exploration = result.exploration
+
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 

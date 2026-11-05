@@ -30,6 +30,7 @@ def apply_theme(app) -> None:
         QPalette.AlternateBase: "#232323", QPalette.Text: "#f0f0f0", QPalette.Button: "#2b2b2b",
         QPalette.ButtonText: "#ffffff", QPalette.Highlight: "#fe2c55", QPalette.HighlightedText: "#ffffff",
         QPalette.ToolTipBase: "#222222", QPalette.ToolTipText: "#ffffff", QPalette.PlaceholderText: "#777777",
+        QPalette.Link: "#25f4ee", QPalette.LinkVisited: "#25f4ee",
     }.items():
         pal.setColor(role, QColor(color))
     app.setPalette(pal)
