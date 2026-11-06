@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Watcher</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/">▶ Video Watcher</a>
+    <form id="search-form" class="search" role="search">
+      <input id="q" name="q" type="search" placeholder="Search videos on every site…"
+             value="{{ query }}" maxlength="200" autocomplete="off" autofocus>
+      <button type="submit">Search</button>
+    </form>
+    <div id="source-filters" class="filters" aria-label="Sources">
+      {% for p in providers %}
+      <label class="chip" data-source="{{ p.key }}">
+        <input type="checkbox" value="{{ p.key }}" checked>
+        <span>{{ p.name }}</span>
+        {% if p.ad_supported %}<small title="Plays with the site's own ads">ads</small>{% endif %}
+      </label>
+      {% endfor %}
+    </div>
+  </header>
+
+  <main>
+    <p id="status" class="status" aria-live="polite">Search once, see videos from {{ providers|map(attribute='name')|join(', ') }}.</p>
+    <ul id="source-status" class="source-status"></ul>
+    <section id="results" class="grid"></section>
+  </main>
+
+  <dialog id="player">
+    <div class="player-head">
+      <span id="player-source" class="badge"></span>
+      <h2 id="player-title"></h2>
+      <button id="player-close" class="close" aria-label="Close">✕</button>
+    </div>
+    <div class="frame-wrap"><iframe id="player-frame" title="Video player"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+    <div class="player-foot">
+      <span id="player-meta"></span>
+      <span id="player-ads" class="ads-note" hidden></span>
+      <a id="player-link" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+  </dialog>
+
+  <template id="card-tpl">
+    <article class="card" tabindex="0">
+      <div class="thumb">
+        <img loading="lazy" alt="">
+        <span class="duration"></span>
+      </div>
+      <div class="body">
+        <h3 class="title"></h3>
+        <p class="channel"></p>
+        <p class="origin"><span class="badge"></span><a class="domain" target="_blank" rel="noopener noreferrer"></a></p>
+      </div>
+    </article>
+  </template>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
