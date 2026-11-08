@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Stream</title>
+  <meta name="description" content="Chat with AI models in your browser (WebLLM), through your own Ollama or llama.cpp, or on Hugging Face — and check whether a big model will run on your computer before you download it.">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b6cff'/%3E%3Cpath d='M7 20c4-8 7 4 10-4s5 2 8-2' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn only-mobile" id="menu-btn" aria-label="Models">☰</button>
+    <div class="brand"><span class="logo"></span>LLM Stream</div>
+    <div class="pills" id="pills"></div>
+    <button class="btn ghost small" id="open-settings">Settings</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <nav class="tabs" id="tabs" role="tablist">
+        <button role="tab" data-backend="webllm">WebLLM</button>
+        <button role="tab" data-backend="ollama">Ollama</button>
+        <button role="tab" data-backend="llamacpp">llama.cpp</button>
+        <button role="tab" data-backend="huggingface">Hugging Face</button>
+      </nav>
+      <p class="backend-detail" id="backend-detail"></p>
+      <input type="search" id="model-search" placeholder="Filter models…" autocomplete="off">
+      <ul class="model-list" id="model-list"></ul>
+
+      <section class="check">
+        <h2>Run a big model?</h2>
+        <p class="muted">Paste or <strong>drag</strong> a Hugging Face / Ollama link, or a <code>.gguf</code> file. I'll check whether you can download it and whether it fits. Nothing downloads until you say yes.</p>
+        <form id="inspect-form" class="row">
+          <input id="inspect-input" placeholder="e.g. huggingface.co/Qwen/Qwen3-8B-GGUF" autocomplete="off">
+          <button class="btn">Check</button>
+        </form>
+        <details id="connect">
+          <summary>Connect your computer (Ollama / llama.cpp)</summary>
+          <p>This website talks to the AI apps on <em>your</em> computer directly. Nothing goes through our server.</p>
+          <p><strong>Ollama</strong>: allow this site, then restart Ollama:</p>
+          <div class="cmd"><code id="ollama-cmd"></code><button data-copy="ollama-cmd">Copy</button></div>
+          <p class="muted">Windows (PowerShell): <code id="ollama-cmd-win"></code></p>
+          <p><strong>llama.cpp</strong>: start a server with any GGUF file:</p>
+          <div class="cmd"><code id="llama-cmd">llama-server -m model.gguf --port 8080</code><button data-copy="llama-cmd">Copy</button></div>
+          <p class="muted">Use Chrome or Edge, and allow “local network access” if the browser asks. Safari blocks sites from reaching localhost.</p>
+        </details>
+      </section>
+    </aside>
+
+    <main class="chat">
+      <div class="chat-head">
+        <div>
+          <div class="current-model" id="current-model">No model selected</div>
+          <div class="muted small" id="current-backend"></div>
+        </div>
+        <div class="row">
+          <button class="btn ghost" id="settings-btn" aria-expanded="false">Chat options</button>
+          <button class="btn ghost" id="clear-btn">New chat</button>
+        </div>
+      </div>
+      <div class="settings" id="settings" hidden>
+        <label>System prompt<textarea id="system-prompt" rows="2" placeholder="You are a helpful assistant."></textarea></label>
+        <div class="row">
+          <label>Temperature <input type="number" id="temperature" min="0" max="2" step="0.1" value="0.7"></label>
+          <label>Max tokens <input type="number" id="max-tokens" min="1" step="1" placeholder="auto"></label>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="empty" id="empty">
+          <h1>Pick a model and start chatting</h1>
+          <p>Small models run right in your browser with <strong>WebLLM</strong> — no install. Already have <strong>Ollama</strong> or <strong>llama.cpp</strong>? Connect them. Huge models can stream from <strong>Hugging Face</strong>.</p>
+          <p class="muted">Found a model on huggingface.co or ollama.com? Drag its link onto this page.</p>
+        </div>
+      </div>
+
+      <form class="composer" id="composer">
+        <textarea id="prompt" rows="1" placeholder="Message…" autocomplete="off"></textarea>
+        <button class="btn" id="send-btn" type="submit">Send</button>
+        <button class="btn danger" id="stop-btn" type="button" hidden>Stop</button>
+      </form>
+    </main>
+  </div>
+
+  <div class="drop-overlay" id="drop-overlay" hidden>
+    <div class="drop-box">
+      <div class="drop-icon">⤓</div>
+      <div class="drop-title">Drop to check this model</div>
+      <div class="muted">A model link, a .gguf file, or a text file with a model name. Nothing downloads yet.</div>
+    </div>
+  </div>
+
+  <dialog id="inspect-dialog" class="sheet"><div id="inspect-body"></div></dialog>
+
+  <dialog id="confirm-dialog" class="sheet narrow">
+    <form method="dialog">
+      <h2 id="confirm-title">Download?</h2>
+      <div id="confirm-body"></div>
+      <div class="row end">
+        <button class="btn ghost" value="cancel">Cancel</button>
+        <button class="btn" id="confirm-ok" value="ok">Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog" class="sheet narrow">
+    <form method="dialog" class="settings-grid" id="settings-form">
+      <h2>Settings</h2>
+      <div class="two">
+        <label>Your RAM (GB)<input type="number" id="set-ram" min="1" step="1" placeholder="e.g. 16"></label>
+        <label>Free disk (GB, optional)<input type="number" id="set-disk" min="1" step="1" placeholder="e.g. 200"></label>
+      </div>
+      <p class="muted small" id="ram-hint"></p>
+      <label>Hugging Face token (for gated models and hosted chat)<input type="password" id="set-hf" placeholder="hf_…" autocomplete="off"></label>
+      <p class="muted small">Get one at <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener">huggingface.co/settings/tokens</a>. It's saved only in this browser and sent only to Hugging Face.</p>
+      <label>Ollama address<input id="set-ollama" placeholder="http://localhost:11434"></label>
+      <label>llama.cpp server address<input id="set-llama" placeholder="http://localhost:8080"></label>
+      <div class="row end">
+        <button class="btn ghost" value="cancel">Cancel</button>
+        <button class="btn" value="save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="jobs" id="jobs"></div>
+  <div class="toasts" id="toasts"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

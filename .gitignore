@@ -6,3 +6,6 @@ dist/
 .venv/
 *.gguf
 *.part
+node_modules/
+web/dist/
+.wrangler/

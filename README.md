@@ -1,6 +1,10 @@
 # python-disconnected · LLM Stream
 
-One streaming chat app for every way of running a language model:
+One streaming chat app for every way of running a language model.
+
+**Use it online: https://llm-stream-chat.pages.dev**: no install needed (see [`web/`](web/README.md)).
+Or run the Python version below, which can also save models into a folder and start `llama-server` for you.
+
 
 | Backend | Where the model runs | What you need |
 |---|---|---|

@@ -1,0 +1,11 @@
+{
+  "name": "llm-stream-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "dev": "npx wrangler@4 pages dev public",
+    "build": "node scripts/build-worker.mjs",
+    "deploy": "node scripts/build-worker.mjs && node scripts/deploy.mjs llm-stream-chat main"
+  }
+}
