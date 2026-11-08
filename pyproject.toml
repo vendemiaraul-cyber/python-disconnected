@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llmstream"
+version = "0.1.0"
+description = "Stream chat from WebLLM, Ollama, llama.cpp and Hugging Face models, and check whether a big model can run on your machine before downloading it."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+llmstream = "llmstream.cli:main"
+
+[tool.setuptools]
+packages = ["llmstream", "llmstream.backends"]
+
+[tool.setuptools.package-data]
+llmstream = ["static/*"]

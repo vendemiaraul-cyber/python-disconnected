@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Stream</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b6cff'/%3E%3Cpath d='M7 20c4-8 7 4 10-4s5 2 8-2' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn only-mobile" id="menu-btn" aria-label="Models">☰</button>
+    <div class="brand"><span class="logo"></span>LLM Stream</div>
+    <div class="pills" id="pills"></div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <nav class="tabs" id="tabs" role="tablist">
+        <button role="tab" data-backend="webllm">WebLLM</button>
+        <button role="tab" data-backend="ollama">Ollama</button>
+        <button role="tab" data-backend="llamacpp">llama.cpp</button>
+        <button role="tab" data-backend="huggingface">Hugging Face</button>
+      </nav>
+      <p class="backend-detail" id="backend-detail"></p>
+      <input type="search" id="model-search" placeholder="Filter models…" autocomplete="off">
+      <ul class="model-list" id="model-list"></ul>
+
+      <section class="check">
+        <h2>Run a big model?</h2>
+        <p class="muted">Paste or <strong>drag</strong> a Hugging Face / Ollama link, or a <code>.gguf</code> file. I'll check whether you can download it and whether it fits. Nothing downloads until you say yes.</p>
+        <form id="inspect-form" class="row">
+          <input id="inspect-input" placeholder="e.g. huggingface.co/Qwen/Qwen3-8B-GGUF" autocomplete="off">
+          <button class="btn">Check</button>
+        </form>
+      </section>
+    </aside>
+
+    <main class="chat">
+      <div class="chat-head">
+        <div>
+          <div class="current-model" id="current-model">No model selected</div>
+          <div class="muted small" id="current-backend"></div>
+        </div>
+        <div class="row">
+          <button class="btn ghost" id="settings-btn" aria-expanded="false">Settings</button>
+          <button class="btn ghost" id="clear-btn">New chat</button>
+        </div>
+      </div>
+      <div class="settings" id="settings" hidden>
+        <label>System prompt<textarea id="system-prompt" rows="2" placeholder="You are a helpful assistant."></textarea></label>
+        <div class="row">
+          <label>Temperature <input type="number" id="temperature" min="0" max="2" step="0.1" value="0.7"></label>
+          <label>Max tokens <input type="number" id="max-tokens" min="1" step="1" placeholder="auto"></label>
+          <label>Context (llama.cpp load) <input type="number" id="context" min="512" step="512" value="4096"></label>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="empty" id="empty">
+          <h1>Pick a model and start chatting</h1>
+          <p>Small models run right in your browser with <strong>WebLLM</strong>, or locally through <strong>Ollama</strong> and <strong>llama.cpp</strong>. Huge ones can stream from <strong>Hugging Face</strong>.</p>
+          <p class="muted">Found a model on huggingface.co or ollama.com? Drag its link onto this page.</p>
+        </div>
+      </div>
+
+      <form class="composer" id="composer">
+        <textarea id="prompt" rows="1" placeholder="Message…" autocomplete="off"></textarea>
+        <button class="btn" id="send-btn" type="submit">Send</button>
+        <button class="btn danger" id="stop-btn" type="button" hidden>Stop</button>
+      </form>
+    </main>
+  </div>
+
+  <div class="drop-overlay" id="drop-overlay" hidden>
+    <div class="drop-box">
+      <div class="drop-icon">⤓</div>
+      <div class="drop-title">Drop to check this model</div>
+      <div class="muted">A model link, a .gguf file, or a text file with a model name. Nothing downloads yet.</div>
+    </div>
+  </div>
+
+  <dialog id="inspect-dialog" class="sheet">
+    <div id="inspect-body"></div>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="sheet narrow">
+    <form method="dialog">
+      <h2 id="confirm-title">Download?</h2>
+      <div id="confirm-body"></div>
+      <div class="row end">
+        <button class="btn ghost" value="cancel">Cancel</button>
+        <button class="btn" id="confirm-ok" value="ok">Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="jobs" id="jobs"></div>
+  <div class="toasts" id="toasts"></div>
+
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
