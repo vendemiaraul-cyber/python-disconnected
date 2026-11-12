@@ -73,8 +73,8 @@ model with a JSON trailer added to the end:
 ```
 
 - GGUF readers find tensors by offsets in the GGUF header and ignore extra bytes
-  at the end. An `.llm` file therefore works anywhere a `.gguf` does (llama.cpp,
-  LM Studio, Ollama's `FROM`) without unpacking.
+  at the end, so llama.cpp loads an `.llm` file as-is, without unpacking. Other
+  apps may insist on a `.gguf` name; `llmfile unpack` makes one.
 - Saving a chat rewrites only the small trailer at the end, never the gigabytes of model.
 - The file is never truncated while saving: shorter metadata is padded with
   spaces. That keeps saving safe on Windows while the model is memory-mapped.
