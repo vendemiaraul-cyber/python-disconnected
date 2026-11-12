@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llmfile"
+version = "0.1.0"
+description = "The .llm file type: download a model as one file, then chat with it."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["llama-cpp-python>=0.2.80"]
+
+[project.scripts]
+llmfile = "llmfile.cli:main"
+
+[tool.setuptools]
+packages = ["llmfile"]
+
+[tool.setuptools.package-data]
+llmfile = ["static/*.html"]

@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>.llm files</title>
+<style>
+:root {
+  --bg: #f6f5f2; --panel: #ffffff; --ink: #1d1c1a; --muted: #6b6862; --line: #e3e0d9;
+  --accent: #3657d6; --accent-ink: #ffffff; --soft: #eef1fc; --bad: #b3261e; --good: #2f7d4f;
+  --user: #3657d6; --user-ink: #fff; --bot: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161615; --panel: #1f1f1d; --ink: #ecebe8; --muted: #9c998f; --line: #34332f;
+    --accent: #7b95ff; --accent-ink: #10131f; --soft: #252a3d; --bad: #ff8a80; --good: #7fd19b;
+    --user: #33427a; --user-ink: #ecebe8; --bot: #1f1f1d;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: flex; flex-direction: column;
+}
+header {
+  display: flex; align-items: center; gap: 24px; padding: 12px 20px;
+  border-bottom: 1px solid var(--line); background: var(--panel);
+}
+.brand { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.brand span { color: var(--accent); font-family: ui-monospace, Menlo, monospace; }
+nav { display: flex; gap: 4px; }
+nav button {
+  border: 0; background: none; color: var(--muted); font: inherit; padding: 6px 12px;
+  border-radius: 8px; cursor: pointer;
+}
+nav button.on { background: var(--soft); color: var(--accent); font-weight: 600; }
+main { flex: 1; min-height: 0; overflow: auto; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h2 { font-size: 20px; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 20px; }
+input, textarea {
+  font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px; width: 100%;
+}
+input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+.btn {
+  font: inherit; font-weight: 600; border: 1px solid var(--line); background: var(--panel);
+  color: var(--ink); padding: 8px 14px; border-radius: 10px; cursor: pointer; white-space: nowrap;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:disabled { opacity: .5; cursor: default; }
+.row { display: flex; gap: 8px; align-items: center; }
+.list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.model { padding: 12px 14px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; }
+.model:hover { border-color: var(--accent); }
+.model .repo { font-weight: 600; word-break: break-all; }
+.meta { color: var(--muted); font-size: 13px; }
+.files { border-top: 1px solid var(--line); padding: 8px 14px 14px; cursor: default; }
+.file { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.file:last-of-type { border-bottom: 0; }
+.file .fname { font-family: ui-monospace, Menlo, monospace; font-size: 13px; word-break: break-all; }
+.badge { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: var(--soft); color: var(--accent); }
+.save { margin-top: 12px; padding: 12px; border-radius: 10px; background: var(--soft); }
+.save label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+body.chatting .jobs { bottom: 100px; }
+.jobs { position: fixed; right: 16px; bottom: 16px; width: min(360px, calc(100vw - 32px)); display: flex; flex-direction: column; gap: 8px; z-index: 5; }
+.job { padding: 12px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+.bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 8px 0 4px; }
+.bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+.err { color: var(--bad); }
+.ok { color: var(--good); }
+.empty { color: var(--muted); text-align: center; padding: 40px 0; }
+.lib { padding: 14px; display: flex; gap: 14px; align-items: center; }
+.icon {
+  width: 44px; height: 52px; flex: none; border-radius: 6px; background: var(--soft); color: var(--accent);
+  display: grid; place-items: end center; padding-bottom: 8px; font: 700 11px ui-monospace, Menlo, monospace;
+  clip-path: polygon(0 0, 72% 0, 100% 22%, 100% 100%, 0 100%);
+}
+.lib .grow { flex: 1; min-width: 0; }
+.lib .title { font-weight: 600; word-break: break-all; }
+/* chat */
+#chat { display: flex; flex-direction: column; height: 100%; }
+.chathead { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.chathead .grow { flex: 1; min-width: 0; }
+.chathead .title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msgs { flex: 1; overflow: auto; padding: 20px 16px; }
+.msgs .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; white-space: pre-wrap; word-wrap: break-word; }
+.msg.user { align-self: flex-end; background: var(--user); color: var(--user-ink); border-bottom-right-radius: 4px; }
+.msg.assistant { align-self: flex-start; background: var(--bot); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.msg.thinking::after { content: "▍"; animation: blink 1s steps(1) infinite; color: var(--accent); }
+@keyframes blink { 50% { opacity: 0; } }
+.composer { border-top: 1px solid var(--line); background: var(--panel); padding: 12px 16px; }
+.composer .row { max-width: 760px; margin: 0 auto; align-items: flex-end; }
+.composer textarea { resize: none; max-height: 200px; }
+.settings { border-bottom: 1px solid var(--line); background: var(--panel); padding: 12px 16px; }
+.settings .inner { max-width: 760px; margin: 0 auto; }
+.hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 6px; }
+@media (max-width: 560px) {
+  header { gap: 12px; padding: 10px 16px; }
+  .file { grid-template-columns: 1fr auto; }
+  .file .size { display: none; }
+  .msg { max-width: 92%; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span>.llm</span> files</div>
+  <nav>
+    <button data-view="find" class="on">Find models</button>
+    <button data-view="library">My files</button>
+  </nav>
+</header>
+<main id="main"></main>
+<div class="jobs" id="jobs"></div>
+
+<script>
+const $ = (tag, props = {}, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (v !== undefined && v !== null && v !== false) el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) if (kid != null) el.append(kid);
+  return el;
+};
+const human = n => {
+  if (!n) return "–";
+  const u = ["B", "KB", "MB", "GB", "TB"]; let i = 0;
+  while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+  return (i < 2 ? n.toFixed(0) : n.toFixed(1)) + " " + u[i];
+};
+const compact = n => Intl.NumberFormat(undefined, { notation: "compact" }).format(n || 0);
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? {} :
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+}
+const main = document.getElementById("main");
+let view = "find";
+const state = { query: "", results: null, open: null };
+let searchSeq = 0;
+
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => show(b.dataset.view));
+function show(v, arg) {
+  view = v;
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.view === v));
+  document.body.classList.toggle("chatting", v === "chat");
+  main.replaceChildren();
+  ({ find: renderFind, library: renderLibrary, chat: renderChat })[v](arg);
+}
+
+/* ---------- Find models ---------- */
+function renderFind() {
+  const input = $("input", { type: "search", placeholder: "Search models, e.g. llama, qwen, phi, smollm…", value: state.query });
+  const list = $("div", { class: "list" });
+  const go = async () => {
+    const seq = ++searchSeq;  // ignore answers to older searches
+    state.query = input.value; state.open = null;
+    list.replaceChildren($("div", { class: "empty" }, "Searching Hugging Face…"));
+    let results;
+    try { results = await api("/api/search?q=" + encodeURIComponent(state.query)); }
+    catch (e) { if (seq === searchSeq) list.replaceChildren($("div", { class: "empty err" }, e.message)); return; }
+    if (seq !== searchSeq || view !== "find") return;
+    state.results = results;
+    drawResults(list);
+  };
+  input.addEventListener("keydown", e => e.key === "Enter" && go());
+  main.append($("div", { class: "wrap" },
+    $("h2", {}, "Find a model"),
+    $("p", { class: "sub" }, "Pick a model and a size. It downloads as a single .llm file you can chat with, even offline."),
+    $("div", { class: "row" }, input, $("button", { class: "btn primary", onclick: go }, "Search")),
+    list));
+  if (state.results) drawResults(list); else go();
+  input.focus();
+}
+
+function drawResults(list) {
+  if (!state.results.length) { list.replaceChildren($("div", { class: "empty" }, "No downloadable models found. Try another word.")); return; }
+  list.replaceChildren(...state.results.map(m => {
+    const card = $("div", { class: "card" });
+    const head = $("div", { class: "model", onclick: () => toggle(m, card) },
+      $("div", {}, $("div", { class: "repo" }, m.repo),
+        $("div", { class: "meta" }, m.tags.filter(t => !["gguf", "region"].includes(t)).slice(0, 5).join(" · "))),
+      $("div", { class: "meta", style: "text-align:right;white-space:nowrap" },
+        "↓ " + compact(m.downloads), $("br"), "♥ " + compact(m.likes)));
+    card.append(head);
+    if (state.open === m.repo) toggle(m, card, true);
+    return card;
+  }));
+}
+
+async function toggle(m, card, force) {
+  const existing = card.querySelector(".files");
+  if (existing && !force) { existing.remove(); state.open = null; return; }
+  state.open = m.repo;
+  document.querySelectorAll(".files").forEach(el => el.remove());
+  const box = $("div", { class: "files" }, $("div", { class: "meta" }, "Loading files…"));
+  card.append(box);
+  let files;
+  try { files = await api("/api/files?repo=" + encodeURIComponent(m.repo)); }
+  catch (e) { box.replaceChildren($("div", { class: "err" }, e.message)); return; }
+  if (!files.length) { box.replaceChildren($("div", { class: "meta" }, "This repo has no single-file models to download.")); return; }
+  const pick = files.find(f => f.quant === "Q4_K_M") || files[0];
+  const name = $("input", { value: fileStem(pick.file) + ".llm" });
+  let chosen = pick;
+  const rows = files.map(f => {
+    const radio = $("input", { type: "radio", name: "pick-" + m.repo, style: "width:auto", checked: f === pick,
+      onchange: () => { chosen = f; name.value = fileStem(f.file) + ".llm"; } });
+    return $("label", { class: "file" },
+      $("span", { class: "row" }, radio, $("span", { class: "fname" }, f.file)),
+      $("span", { class: "row" }, f === pick ? $("span", { class: "meta" }, "recommended") : null,
+        f.quant ? $("span", { class: "badge" }, f.quant) : null),
+      $("span", { class: "meta size" }, human(f.size)));
+  });
+  const btn = $("button", { class: "btn primary", onclick: async () => {
+    btn.disabled = true;
+    try { await api("/api/download", { repo: m.repo, file: chosen.file, filename: name.value }); pollJobs(); }
+    catch (e) { alert(e.message); }
+    btn.disabled = false;
+  } }, "Download");
+  box.replaceChildren(
+    $("div", { class: "meta", style: "margin-bottom:4px" }, "Smaller files are faster and use less memory; larger ones are smarter. Q4_K_M is a good middle."),
+    ...rows,
+    $("div", { class: "save" }, $("label", {}, "Save as"), $("div", { class: "row" }, name, btn)));
+}
+const fileStem = f => f.split("/").pop().replace(/\.gguf$/i, "");
+
+/* ---------- Downloads ---------- */
+let polling = null;
+const seenDone = new Set(), finished = new Set();
+async function pollJobs() {
+  clearTimeout(polling);
+  let jobs = [];
+  try { jobs = await api("/api/jobs"); } catch { }
+  const tray = document.getElementById("jobs");
+  const visible = jobs.filter(j => j.status === "downloading" || !seenDone.has(j.id + ":closed"));
+  tray.replaceChildren(...visible.map(j => {
+    const pct = j.total ? (j.done / j.total * 100) : 0;
+    const close = $("button", { class: "btn", style: "padding:2px 8px", onclick: () => { seenDone.add(j.id + ":closed"); pollJobs(); } }, "✕");
+    const cancel = $("button", { class: "btn", style: "padding:2px 8px", onclick: () => api("/api/cancel", { id: j.id }) }, "Cancel");
+    let status;
+    if (j.status === "downloading") status = $("div", { class: "meta" }, `${human(j.done)} of ${human(j.total)} · ${pct.toFixed(0)}%`);
+    else if (j.status === "done") status = $("div", { class: "ok" }, "Saved. ",
+      $("a", { href: "#", onclick: e => { e.preventDefault(); show("chat", j.out); } }, "Start chatting"));
+    else status = $("div", { class: "err" }, j.error || j.status);
+    if (j.status !== "downloading" && !finished.has(j.id)) {
+      finished.add(j.id);
+      if (j.status === "done" && view === "library") show("library");
+      if (j.status !== "error") setTimeout(() => { seenDone.add(j.id + ":closed"); pollJobs(); }, 10000);
+    }
+    return $("div", { class: "card job" },
+      $("div", { class: "row", style: "justify-content:space-between" },
+        $("strong", { style: "word-break:break-all" }, j.out), j.status === "downloading" ? cancel : close),
+      j.status === "downloading" ? $("div", { class: "bar" }, $("i", { style: `width:${pct}%` })) : null,
+      status);
+  }));
+  if (jobs.some(j => j.status === "downloading")) polling = setTimeout(pollJobs, 700);
+}
+
+/* ---------- Library ---------- */
+async function renderLibrary() {
+  const wrap = $("div", { class: "wrap" }, $("h2", {}, "My .llm files"));
+  main.append(wrap);
+  let lib;
+  try { lib = await api("/api/library"); } catch (e) { wrap.append($("p", { class: "err" }, e.message)); return; }
+  wrap.append($("p", { class: "sub" }, "Saved in ", $("code", {}, lib.dir), ". Each file holds the model and its conversation."));
+  if (!lib.files.length) {
+    wrap.append($("div", { class: "empty" }, "No .llm files yet. ",
+      $("a", { href: "#", onclick: e => { e.preventDefault(); show("find"); } }, "Find a model"), " to get started."));
+    return;
+  }
+  wrap.append($("div", { class: "list" }, lib.files.map(f => f.error
+    ? $("div", { class: "card lib" }, $("div", { class: "icon" }, ".llm"),
+        $("div", { class: "grow" }, $("div", { class: "title" }, f.file), $("div", { class: "err" }, f.error)))
+    : $("div", { class: "card lib" },
+        $("div", { class: "icon" }, ".llm"),
+        $("div", { class: "grow" },
+          $("div", { class: "title" }, f.file),
+          $("div", { class: "meta" }, [human(f.size), f.source.repo,
+            f.messages ? `${f.messages} saved messages` : "no chat yet"].filter(Boolean).join(" · "))),
+        $("button", { class: "btn primary", onclick: () => show("chat", f.file) }, f.messages ? "Continue chat" : "Chat")))));
+}
+
+/* ---------- Chat ---------- */
+async function renderChat(file) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.view === "library"));
+  const msgs = $("div", { class: "inner" });
+  const scroller = $("div", { class: "msgs" }, msgs);
+  const box = $("textarea", { rows: 1, placeholder: "Message…" });
+  const send = $("button", { class: "btn primary" }, "Send");
+  const sys = $("textarea", { rows: 3 });
+  const settings = $("div", { class: "settings", hidden: true }, $("div", { class: "inner" },
+    $("div", { class: "meta", style: "margin-bottom:6px" }, "System prompt (instructions the model follows; saved in the file)"),
+    sys,
+    $("div", { class: "row", style: "justify-content:flex-end;margin-top:8px" },
+      $("button", { class: "btn primary", onclick: async () => {
+        try { await api("/api/system", { file, text: sys.value }); settings.hidden = true; } catch (e) { alert(e.message); }
+      } }, "Save"))));
+  const title = $("div", { class: "title" }, file);
+  const sub = $("div", { class: "meta" }, "");
+  const root = $("div", { id: "chat" },
+    $("div", { class: "chathead" },
+      $("button", { class: "btn", onclick: () => show("library") }, "←"),
+      $("div", { class: "grow" }, title, sub),
+      $("button", { class: "btn", onclick: () => settings.hidden = !settings.hidden }, "Settings"),
+      $("button", { class: "btn", onclick: async () => {
+        if (busy || !confirm("Erase this conversation from the file?")) return;
+        try { await api("/api/reset", { file }); msgs.replaceChildren(); sub.textContent = "Conversation cleared"; }
+        catch (e) { sub.textContent = e.message; }
+      } }, "New chat")),
+    settings, scroller,
+    $("div", { class: "composer" }, $("div", { class: "row" }, box, send),
+      $("div", { class: "hint" }, "Runs on your computer. Enter to send, Shift+Enter for a new line.")));
+  main.append(root);
+
+  const bubble = (role, text) => { const el = $("div", { class: "msg " + role }, text); msgs.append(el); return el; };
+  const toBottom = () => scroller.scrollTop = scroller.scrollHeight;
+  try {
+    const h = await api("/api/history?file=" + encodeURIComponent(file));
+    title.textContent = h.name;
+    sub.textContent = [file, h.source.repo].filter(Boolean).join(" · ");
+    sys.value = h.system_prompt;
+    h.messages.forEach(m => bubble(m.role, m.content));
+    toBottom();
+  } catch (e) { sub.textContent = e.message; sub.className = "meta err"; }
+
+  let busy = false, controller = null;
+  const grow = () => { box.style.height = "auto"; box.style.height = box.scrollHeight + "px"; };
+  box.addEventListener("input", grow);
+  box.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); go(); } });
+  send.onclick = () => busy ? controller?.abort() : go();
+  box.focus();
+
+  async function go() {
+    const text = box.value.trim();
+    if (!text || busy) return;
+    busy = true; send.textContent = "Stop"; box.value = ""; grow();
+    bubble("user", text);
+    const out = bubble("assistant", ""); out.classList.add("thinking");
+    toBottom();
+    controller = new AbortController();
+    const note = sub.textContent;
+    if (!msgs.dataset.loaded) sub.textContent = "Loading model (first message can take a moment)…";
+    try {
+      const r = await fetch("/api/chat", { method: "POST", signal: controller.signal,
+        headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file, message: text }) });
+      if (!r.ok) throw new Error((await r.json()).error || r.statusText);
+      msgs.dataset.loaded = 1; sub.textContent = note;
+      const reader = r.body.getReader(), dec = new TextDecoder();
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const atBottom = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 40;
+        out.textContent += dec.decode(value, { stream: true });
+        if (atBottom) toBottom();
+      }
+    } catch (e) {
+      if (e.name !== "AbortError") { out.textContent += (out.textContent ? "\n" : "") + "⚠ " + e.message; out.classList.add("err"); sub.textContent = note; }
+    }
+    out.classList.remove("thinking");
+    busy = false; send.textContent = "Send"; box.focus();
+  }
+}
+
+show("find");
+pollJobs();
+</script>
+</body>
+</html>
